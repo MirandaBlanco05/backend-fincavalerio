@@ -11,6 +11,11 @@ const { Bovino, GrupoBovino } = require("../../BOVINO/MODEL");
 
 exports.crear = async (req, res) => {
   try {
+
+    if (!req.body) {
+      return res.status(400).json({ error: "No se enviaron datos" });
+    }
+
     const { Id_veterinario, Id_bovino, fecha, motivos } = req.body;
 
     const visita = await Visita.create({
@@ -26,10 +31,13 @@ exports.crear = async (req, res) => {
     res.json({ mensaje: "Visita insertada correctamente" });
 
   } catch (error) {
-    console.error("ERROR INSERTAR VISITA:", error);
-    res.status(500).json({ error: error.message });
-  }
+  console.error("ERROR COMPLETO:", error);
+  console.error("ERROR SQL:", error.parent);
+  res.status(500).json({ error: error.message });
+}
+
 };
+
 
 
 /* 

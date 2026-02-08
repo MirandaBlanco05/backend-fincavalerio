@@ -1,4 +1,4 @@
-// @ts-nocheck
+
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
@@ -10,7 +10,7 @@ const { conectarDB } = require("./CORE/DATABASE/sequelize");
 
 const app = express();
 
-app.use(cors()); // 🔥 PERMITE FRONTEND
+app.use(cors()); 
 app.use(express.json());
 
 conectarDB();
@@ -22,8 +22,14 @@ app.get("/api/test", (req, res) => {
   });
 });
 
+//visita
 app.use(express.json());
-app.use("/api", require("./MODULOS/VISITA/routes"));
+app.use("/api/visita", require("./MODULOS/VISITA/routes"));
+
+//bovino
+const bovinoRoutes = require("./MODULOS/BOVINO/routes");
+app.use("/api/bovino", bovinoRoutes);
+
 
 
 const PORT = process.env.PORT || 3000;

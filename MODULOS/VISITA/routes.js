@@ -2,12 +2,12 @@ const express = require("express");
 const router = express.Router();
 const controller = require("./CONTROLLER/visita.controller");
 
-router.get("/visita", controller.listar);
+router.get("/listar", controller.listar);
 
-router.post("/agendar", controller.crear);
+router.post("/crear", controller.crear);
 
 router.get("/:id", controller.obtenerPorId);
 
-router.delete("/:id", controller.eliminar);
+router.delete("/eliminar/:id", controller.eliminar);
 
 module.exports = router;
