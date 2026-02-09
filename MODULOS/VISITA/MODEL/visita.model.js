@@ -23,6 +23,10 @@ const Visita = sequelize.define("VISITA", {
   observaciones: {
     type: DataTypes.STRING(200),
     allowNull: true
+  },
+  hora: {
+    type: DataTypes.TIME(7),
+    allowNull: true
   }
 }, {
   tableName: "VISITA",

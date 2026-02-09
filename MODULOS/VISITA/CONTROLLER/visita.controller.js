@@ -9,19 +9,22 @@ const { Bovino, GrupoBovino } = require("../../BOVINO/MODEL");
 
 
 
+
 exports.crear = async (req, res) => {
   try {
-
+    console.log("BODY QUE LLEGA:", req.body);
     if (!req.body) {
       return res.status(400).json({ error: "No se enviaron datos" });
     }
 
-    const { Id_veterinario, Id_bovino, fecha, motivos } = req.body;
+    const { Id_veterinario, Id_bovino, fecha, motivos,observaciones,hora } = req.body;
 
     const visita = await Visita.create({
       Id_veterinario,
       Id_bovino,
-      fecha
+      fecha,
+      observaciones,
+      hora
     });
 
     if (motivos && motivos.length > 0) {
@@ -99,17 +102,19 @@ exports.listar = async (req, res) => {
     });
 
     const resultado = visitas.map(v => ({
-      veterinario: v.Veterinario ? v.Veterinario.nombre : null,
-      animal: v.Bovino ? v.Bovino.nombre : null,
-      crotal: v.Bovino ? v.Bovino.numero_crotal : null,
-      sexo: v.Bovino ? v.Bovino.sexo : null,
-      grupo:
-        v.Bovino && v.Bovino.GrupoBovino
-          ? v.Bovino.GrupoBovino.nombre
-          : null,
-      fecha: v.fecha,
-      motivos: v.Motivos ? v.Motivos.map(m => m.motivo) : []
-    }));
+  veterinario: v.VETERINARIO ? v.VETERINARIO.nombre : null,
+  animal: v.BOVINO ? v.BOVINO.nombre : null,
+  crotal: v.BOVINO ? v.BOVINO.numero_crotal : null,
+  sexo: v.BOVINO ? v.BOVINO.sexo : null,
+  grupo:
+    v.BOVINO && v.BOVINO.GRUPO_BOVINO
+      ? v.BOVINO.GRUPO_BOVINO.nombre
+      : null,
+  fecha: v.fecha,
+  hora: v.hora,                
+      observaciones: v.observaciones, 
+  motivos: v.Motivos ? v.Motivos.map(m => m.motivo) : []
+}));
 
     res.json(resultado);
 
