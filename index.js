@@ -30,6 +30,9 @@ app.use("/api/visita", require("./MODULOS/VISITA/routes"));
 const bovinoRoutes = require("./MODULOS/BOVINO/routes");
 app.use("/api/bovino", bovinoRoutes);
 
+//login
+app.use("/api/login", require("./MODULOS/LOGIN/routes"));
+
 
 
 const PORT = process.env.PORT || 3000;
