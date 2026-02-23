@@ -34,6 +34,11 @@ app.use("/api/bovino", bovinoRoutes);
 app.use("/api/login", require("./MODULOS/LOGIN/routes"));
 
 
+//ciclo celo 
+app.use("/api/ciclo", require("./MODULOS/REPRODUCCION/routes"));
+
+
+
 
 const PORT = process.env.PORT || 3000;
 
