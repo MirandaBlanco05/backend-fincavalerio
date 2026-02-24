@@ -12,16 +12,16 @@ exports.crearCiclo = async (req, res) => {
   }
 };
 
-
-// 🔹 Obtener todos (CON BOVINO)
+//listar
 exports.obtenerCiclos = async (req, res) => {
   try {
     const lista = await Ciclo.findAll({
-      attributes: { exclude: ["Id_bovino"] }, 
+      attributes: { exclude: ["Id_bovino"] },
       include: [
         {
           model: Bovino,
-          attributes: ["id_bovino", "nombre"] 
+          as: "bovino", 
+          attributes: ["id_bovino", "nombre"]
         }
       ]
     });
@@ -61,13 +61,18 @@ exports.actualizarCiclo = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const camposPermitidos = {
-      Id_bovino: req.body.Id_bovino,
-      Fecha_inicio: req.body.Fecha_inicio,
-      Fecha_fin: req.body.Fecha_fin,
-      duracion: req.body.duracion,
-      observaciones: req.body.observaciones
-    };
+    const camposPermitidos = {};
+
+    if (req.body.Id_bovino !== undefined) camposPermitidos.Id_bovino = req.body.Id_bovino;
+    if (req.body.Fecha_inicio !== undefined) camposPermitidos.Fecha_inicio = req.body.Fecha_inicio;
+    if (req.body.Fecha_fin !== undefined) camposPermitidos.Fecha_fin = req.body.Fecha_fin;
+    if (req.body.duracion !== undefined) camposPermitidos.duracion = req.body.duracion;
+    if (req.body.observaciones !== undefined) camposPermitidos.observaciones = req.body.observaciones;
+
+    // Verificar que se envió al menos un campo
+    if (Object.keys(camposPermitidos).length === 0) {
+      return res.status(400).json({ mensaje: "No se enviaron campos para actualizar" });
+    }
 
     const [actualizado] = await Ciclo.update(camposPermitidos, {
       where: { Id_ciclo: id }
@@ -79,7 +84,7 @@ exports.actualizarCiclo = async (req, res) => {
 
     const cicloActualizado = await Ciclo.findByPk(id, {
       include: [
-        { model: Bovino }
+        { model: Bovino, as: "bovino" }
       ]
     });
 

@@ -6,7 +6,7 @@ const controller = require("./CONTROLLER/celo.controller");
 router.post("/crear", controller.crearCiclo);
 router.get("/listar", controller.obtenerCiclos);
 router.get("/:id", controller.obtenerCicloPorId);
-router.put("/update", controller.actualizarCiclo);
-router.delete("/:id", controller.eliminarCiclo);
+router.put("/update/:id", controller.actualizarCiclo);
+router.delete("/delete/:id", controller.eliminarCiclo);
 
 module.exports = router;

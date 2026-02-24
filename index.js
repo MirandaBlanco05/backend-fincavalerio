@@ -34,9 +34,11 @@ app.use("/api/bovino", bovinoRoutes);
 app.use("/api/login", require("./MODULOS/LOGIN/routes"));
 
 
-//ciclo celo 
-app.use("/api/ciclo", require("./MODULOS/REPRODUCCION/routes"));
+// Associations - load BEFORE routes
+require("./MODULOS/REPRODUCCION/MODEL/index.js");
 
+// ciclo celo
+app.use("/api/ciclo", require("./MODULOS/REPRODUCCION/routes"));
 
 
 
