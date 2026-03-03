@@ -1,10 +1,10 @@
-const Login = require("../MODEL/login.model");
+const Login = require("../MODEL/login.model"); 
 
 exports.login = async (req, res) => {
   try {
-    const { Usuario, Contraseña } = req.body;
+    const { Usuario, Contrasena } = req.body;
 
-    if (!Usuario || !Contraseña) {
+    if (!Usuario || !Contrasena) {
       return res.status(400).json({
         error: "Usuario y contraseña son obligatorios"
       });
@@ -13,7 +13,7 @@ exports.login = async (req, res) => {
     const usuario = await Login.findOne({
       where: {
         Usuario: Usuario,
-        Contraseña: Contraseña
+        "Contraseña": Contrasena  // ← usar string con tilde
       }
     });
 
