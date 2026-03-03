@@ -40,7 +40,9 @@ require("./MODULOS/REPRODUCCION/MODEL/index.js");
 // ciclo celo
 app.use("/api/ciclo", require("./MODULOS/REPRODUCCION/routes"));
 
-
+//inseminacion 
+require("./MODULOS//INSEMINACION/MODEL/index.js");
+app.use("/api/inseminacion", require("./MODULOS/INSEMINACION/routes"));
 
 const PORT = process.env.PORT || 3000;
 

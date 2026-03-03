@@ -1,6 +1,7 @@
-const Inseminacion = require("../../REPRODUCCION/MODEL/inseminacion.model");
-const Ciclo = require("../../REPRODUCCION/MODEL/celo.model");
+const Inseminacion = require("../MODEL/inseminacion.model");      
+const Ciclo = require("../../REPRODUCCION/MODEL/celo.model");       
 const Veterinario = require("../../VISITA/MODEL/veterinario.model");
+const Bovino = require("../../BOVINO/MODEL/bovino.model");
 
 
 // 🔹 Crear
@@ -14,18 +15,27 @@ exports.crearInseminacion = async (req, res) => {
 };
 
 
-// 🔹 Obtener todas (CON RELACIONES)
 exports.obtenerInseminaciones = async (req, res) => {
   try {
     const lista = await Inseminacion.findAll({
+      attributes: { exclude: ["Id_ciclo", "Id_veterinaro"] },
       include: [
-        { 
+        {
           model: Ciclo,
-          as: "ciclo"   // 👈 OBLIGATORIO
+          as: "ciclo",
+          attributes: ["Id_ciclo", "Fecha_inicio"],
+          include: [
+            {
+              model: Bovino,
+              as: "bovino",
+              attributes: [ "nombre", "numero_crotal"]
+            }
+          ]
         },
-        { 
+        {
           model: Veterinario,
-          as: "veterinario"   // 👈 OBLIGATORIO
+          as: "veterinario",
+          attributes: [ "nombre"]
         }
       ]
     });
@@ -38,7 +48,7 @@ exports.obtenerInseminaciones = async (req, res) => {
 
 
 // 🔹 Obtener por ID
-exports.obtenerPorId = async (req, res) => {
+exports.obtenerInseminacionPorId = async (req, res) => {
   try {
     const inseminacion = await Inseminacion.findByPk(req.params.id, {
       include: [
