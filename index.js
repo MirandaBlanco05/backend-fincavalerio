@@ -44,6 +44,12 @@ app.use("/api/ciclo", require("./MODULOS/REPRODUCCION/routes"));
 require("./MODULOS//INSEMINACION/MODEL/index.js");
 app.use("/api/inseminacion", require("./MODULOS/INSEMINACION/routes"));
 
+ //embarazo
+require("./MODULOS/EMBARAZO/MODEL");
+app.use("/api/embarazo", require("./MODULOS/EMBARAZO/routes"));
+
+// parto
+app.use("/api/parto", require("./MODULOS/PARTO/routes"));       // ← AGREGA
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {

@@ -13,7 +13,7 @@ exports.login = async (req, res) => {
     const usuario = await Login.findOne({
       where: {
         Usuario: Usuario,
-        "Contraseña": Contrasena  // ← usar string con tilde
+        "Contraseña": Contrasena 
       }
     });
 
