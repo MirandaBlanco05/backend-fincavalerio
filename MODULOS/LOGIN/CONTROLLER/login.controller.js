@@ -2,9 +2,10 @@ const Login = require("../MODEL/login.model");
 
 exports.login = async (req, res) => {
   try {
-    const { Usuario, Contraseña } = req.body;
+    const Usuario = req.body.Usuario
+    const Contrasena = req.body.Contrasena || req.body['Contraseña']
 
-    if (!Usuario || !Contraseña) {
+    if (!Usuario || !Contrasena) {
       return res.status(400).json({
         error: "Usuario y contraseña son obligatorios"
       });
@@ -13,7 +14,7 @@ exports.login = async (req, res) => {
     const usuario = await Login.findOne({
       where: {
         Usuario: Usuario,
-        Contraseña: Contraseña
+        Contraseña: Contrasena
       }
     });
 
