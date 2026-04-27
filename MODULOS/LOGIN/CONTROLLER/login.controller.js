@@ -1,4 +1,4 @@
-const Login = require("../MODEL/login.model");
+const Login = require("../MODEL/login.model"); 
 
 exports.login = async (req, res) => {
   try {

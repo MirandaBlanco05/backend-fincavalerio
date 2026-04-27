@@ -40,9 +40,22 @@ require("./MODULOS/REPRODUCCION/MODEL/index.js");
 // ciclo celo
 app.use("/api/ciclo", require("./MODULOS/REPRODUCCION/routes"));
 
+//inseminacion 
+require("./MODULOS//INSEMINACION/MODEL/index.js");
+app.use("/api/inseminacion", require("./MODULOS/INSEMINACION/routes"));
 
+ //embarazo
+require("./MODULOS/EMBARAZO/MODEL");
+app.use("/api/embarazo", require("./MODULOS/EMBARAZO/routes"));
 
+// parto
+app.use("/api/parto", require("./MODULOS/PARTO/routes"));       
 const PORT = process.env.PORT || 3000;
+
+require("./MODULOS/EMPLEADO/MODEL");
+app.use("/api/empleado", require("./MODULOS/EMPLEADO/routes"));
+
+app.use("/api/ordenio", require("./MODULOS/ORDENIO/routes"));  
 
 app.listen(PORT, () => {
   console.log(`🟢 Backend en http://localhost:${PORT}`);
