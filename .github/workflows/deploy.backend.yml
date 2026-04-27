@@ -1,0 +1,33 @@
+name: Deploy Backend - Finca Valerio
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+
+jobs:
+  deploy:
+    name: Deploy a Render
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v3
+
+      - name: Configurar Node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Instalar dependencias
+        run: npm install
+        working-directory: ./backend
+
+      - name: Verificar sintaxis
+        run: node --check index.js
+        working-directory: ./backend
+
+      - name: Desplegar en Render
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
