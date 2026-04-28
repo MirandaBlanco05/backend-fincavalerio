@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Bovinos - Finca Valerio</title>
+</head>
+<body>
+
+  <h2>Agregar Bovino</h2>
+
+  <input type="text" id="codigo" placeholder="Código"><br><br>
+  <input type="text" id="raza" placeholder="Raza"><br><br>
+  <input type="number" id="peso" placeholder="Peso"><br><br>
+
+  <button onclick="agregarBovino()">Agregar</button>
+
+  <hr>
+
+  <h2>Eliminar Bovino</h2>
+
+  <input type="number" id="idEliminar" placeholder="ID del bovino"><br><br>
+
+  <button onclick="eliminarBovino()">Eliminar</button>
+
+  <p id="respuesta"></p>
+
+  <script>
+    function agregarBovino() {
+      const bovino = {
+        codigo: document.getElementById('codigo').value,
+        raza: document.getElementById('raza').value,
+        peso: document.getElementById('peso').value
+      };
+
+      fetch('http://localhost:3000/bovino/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bovino)
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('respuesta').innerText = data.mensaje;
+      });
+    }
+
+    function eliminarBovino() {
+      const id = document.getElementById('idEliminar').value;
+
+      fetch(`http://localhost:3000/bovino/delete/${id}`, {
+        method: 'DELETE'
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('respuesta').innerText = data.mensaje;
+      });
+    }
+  </script>
+
+</body>
+</html>

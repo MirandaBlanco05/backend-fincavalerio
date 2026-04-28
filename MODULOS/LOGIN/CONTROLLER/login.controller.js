@@ -2,7 +2,8 @@ const Login = require("../MODEL/login.model");
 
 exports.login = async (req, res) => {
   try {
-    const { Usuario, Contrasena } = req.body;
+    const Usuario = req.body.Usuario
+    const Contrasena = req.body.Contrasena || req.body['Contraseña']
 
     if (!Usuario || !Contrasena) {
       return res.status(400).json({
@@ -13,7 +14,7 @@ exports.login = async (req, res) => {
     const usuario = await Login.findOne({
       where: {
         Usuario: Usuario,
-        "Contraseña": Contrasena 
+        Contraseña: Contrasena
       }
     });
 

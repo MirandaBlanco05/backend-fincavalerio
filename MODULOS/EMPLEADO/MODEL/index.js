@@ -1,5 +1,4 @@
-// MODULOS/EMPLEADO/MODEL/index.js
 const Empleado = require("./empleado.model");
+const Ordenio = require("../../ORDENIO/MODEL/ordenio.model");
 
-module.exports = { Empleado};
- 
+module.exports = { Empleado, Ordenio };
