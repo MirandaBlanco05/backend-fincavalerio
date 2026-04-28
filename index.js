@@ -57,6 +57,9 @@ app.use("/api/empleado", require("./MODULOS/EMPLEADO/routes"));
 
 app.use("/api/ordenio", require("./MODULOS/ORDENIO/routes"));  
 
+require("./MODULOS/PRODUCTO/MODEL");
+app.use("/api/producto", require("./MODULOS/PRODUCTO/routes"));
+
 app.listen(PORT, () => {
   console.log(`🟢 Backend en http://localhost:${PORT}`);
 });
