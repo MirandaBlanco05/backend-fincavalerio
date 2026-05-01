@@ -5,9 +5,9 @@ const Inseminacion = require("../MODEL/inseminacion.model");
 
 
 // 🔗 INSEMINACION ↔ CICLO
-Inseminacion.belongsTo(Ciclo, { foreignKey: "Id_ciclo", as: "ciclo" });
-Ciclo.hasMany(Inseminacion, { foreignKey: "Id_ciclo", as: "inseminaciones" });
+Inseminacion.belongsTo(Ciclo, { foreignKey: "id_ciclo", as: "ciclo" });
+Ciclo.hasMany(Inseminacion, { foreignKey: "id_ciclo", as: "inseminaciones" });
 
 // 🔗 INSEMINACION ↔ VETERINARIO
-Inseminacion.belongsTo(Veterinario, { foreignKey: "Id_veterinaro", as: "veterinario" });
-Veterinario.hasMany(Inseminacion, { foreignKey: "Id_veterinaro", as: "inseminaciones" });
+Inseminacion.belongsTo(Veterinario, { foreignKey: "id_veterinario", as: "veterinario" });
+Veterinario.hasMany(Inseminacion, { foreignKey: "id_veterinario", as: "inseminaciones" });

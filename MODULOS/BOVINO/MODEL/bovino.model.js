@@ -1,4 +1,3 @@
-// MODULOS/BOVINO/MODEL/bovino.model.js
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../../../CORE/DATABASE/sequelize");
 
@@ -8,7 +7,7 @@ const Bovino = sequelize.define("BOVINO", {
     primaryKey: true,
     autoIncrement: true
   },
-  Id_grupo: {
+  id_grupo: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
@@ -16,7 +15,7 @@ const Bovino = sequelize.define("BOVINO", {
     type: DataTypes.INTEGER,
     allowNull: true
   },
-  Id_raza: {
+  id_raza: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
@@ -50,6 +49,8 @@ const Bovino = sequelize.define("BOVINO", {
   }
 }, {
   tableName: "BOVINO",
+  schema: "public",
+  freezeTableName: true,
   timestamps: false
 });
 

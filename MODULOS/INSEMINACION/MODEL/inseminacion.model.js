@@ -2,20 +2,20 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../../../CORE/DATABASE/sequelize");
 
 const Inseminacion = sequelize.define("INSEMINACION", {
-  Id_inseminacion: {
+  id_inseminacion: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  Id_veterinaro: {
+  id_veterinario: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  Id_ciclo: {
+  id_ciclo: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  Tipo_inseminacion: {
+  tipo_inseminacion: {
     type: DataTypes.STRING(50),
     allowNull: false,
     validate: {
@@ -35,6 +35,8 @@ const Inseminacion = sequelize.define("INSEMINACION", {
   }
 }, {
   tableName: "INSEMINACION",
+  schema: "public",
+  timestamps: false,
   timestamps: false
 });
 

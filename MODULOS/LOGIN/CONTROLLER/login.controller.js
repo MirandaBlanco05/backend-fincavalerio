@@ -1,33 +1,28 @@
-const Login = require("../MODEL/login.model"); 
+const Login = require("../MODEL/login.model");
 
 exports.login = async (req, res) => {
   try {
-    const Usuario = req.body.Usuario
-    const Contrasena = req.body.Contrasena || req.body['Contraseña']
+    const { usuario, contrasena } = req.body;
 
-    if (!Usuario || !Contrasena) {
-      return res.status(400).json({
-        error: "Usuario y contraseña son obligatorios"
-      });
+    if (!usuario || !contrasena) {
+      return res.status(400).json({ error: "Usuario y contraseña son obligatorios" });
     }
 
-    const usuario = await Login.findOne({
+    const encontrado = await Login.findOne({
       where: {
-        Usuario: Usuario,
-        Contraseña: Contrasena
+        usuario: usuario,
+        contrasena: contrasena
       }
     });
 
-    if (!usuario) {
-      return res.status(401).json({
-        error: "Credenciales incorrectas"
-      });
+    if (!encontrado) {
+      return res.status(401).json({ error: "Credenciales incorrectas" });
     }
 
     res.json({
       mensaje: "Login correcto",
-      usuario: usuario.Usuario,
-      tipo: usuario.Tipo_usuario
+      usuario: encontrado.usuario,
+      tipo: encontrado.tipo_usuario
     });
 
   } catch (error) {

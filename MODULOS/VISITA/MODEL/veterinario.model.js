@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../../../CORE/DATABASE/sequelize");
 
 const Veterinario = sequelize.define("VETERINARIO", {
-  Id_veterinario: {
+  id_veterinario: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
@@ -21,6 +21,7 @@ const Veterinario = sequelize.define("VETERINARIO", {
   }
 }, {
   tableName: "VETERINARIO",
+   schema: "public",
   timestamps: false
 });
 

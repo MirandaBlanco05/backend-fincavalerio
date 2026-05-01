@@ -2,20 +2,20 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../../../CORE/DATABASE/sequelize");
 
 const Cliente = sequelize.define("CLIENTE", {
-  Id_cliente: {
+  id_cliente: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  RNC: {
+  rnc: {
     type: DataTypes.STRING(15),
     allowNull: true
   },
-  Telefono: {
+  telefono: {
     type: DataTypes.STRING(15),
     allowNull: false
   },
-  Correo: {
+  correo: {
     type: DataTypes.STRING(100),
     allowNull: true
   },
@@ -27,12 +27,14 @@ const Cliente = sequelize.define("CLIENTE", {
     type: DataTypes.INTEGER,
     allowNull: true
   },
-  Estado: {
+  estado: {
     type: DataTypes.STRING(8),
     allowNull: true
   }
 }, {
   tableName: "CLIENTE",
+  schema: "public",
+  timestamps: false,
   timestamps: false
 });
 

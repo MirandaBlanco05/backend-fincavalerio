@@ -2,20 +2,20 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../../../CORE/DATABASE/sequelize");
 
 const Ciclo = sequelize.define("CICLO_CELO", {
-  Id_ciclo: {
+  id_ciclo: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  Id_bovino: {
+  id_bovino: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  Fecha_inicio: {
+  fecha_inicio: {
     type: DataTypes.DATEONLY,
     allowNull: false
   },
-  Fecha_fin: {
+  fecha_fin: {
     type: DataTypes.DATEONLY,
     allowNull: false
   },
@@ -29,6 +29,7 @@ const Ciclo = sequelize.define("CICLO_CELO", {
   }
 }, {
   tableName: "CICLO_CELO",
+   schema: "public",
   timestamps: false
 });
 

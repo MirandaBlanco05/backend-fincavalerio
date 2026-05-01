@@ -6,26 +6,26 @@ exports.crear = async (req, res) => {
   try {
     console.log("BODY RECIBIDO:", req.body);
 
-    const { Id_bovino, Id_empleado, fecha, Momento_dia, Cantidad_total } = req.body;
+    const { id_bovino, id_empleado, fecha, momento_dia, cantidad_total } = req.body;
 
-    if (!Id_bovino || !Id_empleado) {
+    if (!id_bovino || !id_empleado) {
       return res.status(400).json({
         error: "Faltan campos obligatorios: Id_bovino e Id_empleado son requeridos"
       });
     }
 
-    if (Momento_dia && !["Mañana", "Tarde"].includes(Momento_dia)) {
+    if (momento_dia && !["Mañana", "Tarde"].includes(momento_dia)) {
       return res.status(400).json({
         error: "Momento_dia solo puede ser 'Mañana' o 'Tarde'"
       });
     }
 
     const ordenio = await Ordenio.create({
-      Id_bovino,
-      Id_empleado,
+      id_bovino,
+      id_empleado,
       fecha,
-      Momento_dia,
-      Cantidad_total
+      momento_dia,
+      cantidad_total
     });
 
     res.status(201).json({
@@ -50,12 +50,12 @@ exports.listar = async (req, res) => {
           as: "BOVINO",
           attributes: ["nombre", "numero_crotal"]
         }
-        // Descomenta cuando tengas el modelo Empleado:
-        // {
-        //   model: Empleado,
-        //   as: "EMPLEADO",
-        //   attributes: ["nombre"]
-        // }
+        
+       // {
+       // model: Empleado,
+        //as: "EMPLEADO",
+          //attributes: ["nombre"]
+        //}
       ],
       order: [["fecha", "DESC"]]
     });
@@ -95,7 +95,7 @@ exports.actualizar = async (req, res) => {
     const { id } = req.params;
     const datos = req.body;
 
-    if (datos.Momento_dia && !["Mañana", "Tarde"].includes(datos.Momento_dia)) {
+    if (datos.momento_dia && !["Mañana", "Tarde"].includes(datos.momento_dia)) {
       return res.status(400).json({
         error: "Momento_dia solo puede ser 'Mañana' o 'Tarde'"
       });

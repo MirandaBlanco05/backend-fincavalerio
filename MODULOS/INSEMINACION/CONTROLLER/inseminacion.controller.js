@@ -18,12 +18,12 @@ exports.crearInseminacion = async (req, res) => {
 exports.obtenerInseminaciones = async (req, res) => {
   try {
     const lista = await Inseminacion.findAll({
-      attributes: { exclude: ["Id_ciclo", "Id_veterinaro"] },
+      attributes: { exclude: ["id_ciclo", "id_veterinario"] },
       include: [
         {
           model: Ciclo,
           as: "ciclo",
-          attributes: ["Id_ciclo", "Fecha_inicio"],
+          attributes: ["id_ciclo", "fecha_inicio"],
           include: [
             {
               model: Bovino,
@@ -81,15 +81,15 @@ exports.actualizarInseminacion = async (req, res) => {
     const { id } = req.params;
 
     const camposPermitidos = {
-      Id_veterinaro: req.body.Id_veterinaro,
-      Id_ciclo: req.body.Id_ciclo,
-      Tipo_inseminacion: req.body.Tipo_inseminacion,
+      id_veterinaro: req.body.id_veterinario,
+      id_ciclo: req.body.id_ciclo,
+      tipo_inseminacion: req.body.tipo_inseminacion,
       resultado: req.body.resultado,
       fecha: req.body.fecha
     };
 
     const [actualizado] = await Inseminacion.update(camposPermitidos, {
-      where: { Id_inseminacion: id }
+      where: { id_inseminacion: id }
     });
 
     if (!actualizado) {
@@ -115,7 +115,7 @@ exports.actualizarInseminacion = async (req, res) => {
 exports.eliminarInseminacion = async (req, res) => {
   try {
     const eliminado = await Inseminacion.destroy({
-      where: { Id_inseminacion: req.params.id }
+      where: { id_inseminacion: req.params.id }
     });
 
     if (!eliminado) {

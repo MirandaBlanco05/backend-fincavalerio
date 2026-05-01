@@ -6,12 +6,12 @@ const Ciclo = require("./celo.model");
 
 //  CICLO ↔ BOVINO
 Ciclo.belongsTo(Bovino, {
-  foreignKey: "Id_bovino",
+  foreignKey: "id_bovino",
   as: "bovino"
 });
 
 Bovino.hasMany(Ciclo, {
-  foreignKey: "Id_bovino",
+  foreignKey: "id_bovino",
   as: "ciclos"
 });
 

@@ -6,24 +6,24 @@ exports.crear = async (req, res) => {
   try {
     console.log("BODY RECIBIDO:", req.body);
  
-    const { Id_embarazo, Fecha_parto, Numero_crias, observaciones } = req.body;
+    const { id_embarazo, fecha_parto, numero_crias, observaciones } = req.body;
  
-    if (!Id_embarazo || !Fecha_parto) {
+    if (!id_embarazo || !fecha_parto) {
       return res.status(400).json({
         error: "Faltan campos obligatorios: Id_embarazo, Fecha_parto"
       });
     }
  
     // Verificar que el embarazo existe
-    const embarazo = await Embarazo.findByPk(Id_embarazo);
+    const embarazo = await Embarazo.findByPk(id_embarazo);
     if (!embarazo) {
       return res.status(404).json({ error: "El embarazo indicado no existe" });
     }
  
     const parto = await Parto.create({
-      Id_embarazo,
-      Fecha_parto,
-      Numero_crias: Numero_crias ?? null,
+      id_embarazo,
+      fecha_parto,
+      numero_crias: numero_crias ?? null,
       observaciones: observaciones ?? null
     });
  
@@ -58,7 +58,7 @@ exports.obtenerPorId = async (req, res) => {
         {
           model: Embarazo,
           as: "EMBARAZO",
-          attributes: ["Id_embarazo", "fase", "Fecha_prevista_parto", "Id_veterinario", "Id_inseminacion"]
+          attributes: ["id_embarazo", "fase", "fecha_prevista_parto", "id_veterinario", "id_inseminacion"]
         }
       ]
     });
@@ -85,8 +85,8 @@ exports.actualizar = async (req, res) => {
     }
  
     // Si cambia el Id_embarazo, verificar que el nuevo existe
-    if (req.body.Id_embarazo) {
-      const embarazo = await Embarazo.findByPk(req.body.Id_embarazo);
+    if (req.body.id_embarazo) {
+      const embarazo = await Embarazo.findByPk(req.body.id_embarazo);
       if (!embarazo) {
         return res.status(404).json({ error: "El embarazo indicado no existe" });
       }

@@ -3,7 +3,7 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../../../CORE/DATABASE/sequelize");
 
 const Empleado = sequelize.define("EMPLEADO", {
-  Id_empleado: {
+  id_empleado: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
@@ -30,6 +30,8 @@ const Empleado = sequelize.define("EMPLEADO", {
   }
 }, {
   tableName: "EMPLEADO",
+  schema: "public",
+  timestamps: false,
   timestamps: false
 });
 

@@ -14,14 +14,14 @@ exports.listar = async (req, res) => {
 /* CREAR */
 exports.crear = async (req, res) => {
   try {
-    const { Cantidad_stock, Tipo_producto, precio_costo, peso, precio_venta, Descripcion } = req.body;
+    const { cantidad_stock, tipo_producto, precio_costo, peso, precio_venta, descripcion } = req.body;
 
-    if (!Cantidad_stock || !Tipo_producto || !precio_costo || precio_venta === undefined) {
+    if (!cantidad_stock || !tipo_producto || !precio_costo || precio_venta === undefined) {
       return res.status(400).json({ error: "Faltan campos obligatorios" });
     }
 
     const producto = await Producto.create({
-      Cantidad_stock, Tipo_producto, precio_costo, peso, precio_venta, Descripcion
+      cantidad_stock, tipo_producto, precio_costo, peso, precio_venta, descripcion
     });
 
     res.status(201).json({ mensaje: "Producto registrado correctamente", producto });

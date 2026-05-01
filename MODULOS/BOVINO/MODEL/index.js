@@ -6,12 +6,12 @@ const GrupoBovino = require("./grupo.model");
 // RELACIONES
 
 // RAZA -> BOVINO
-Raza.hasMany(Bovino, { foreignKey: "Id_raza" });
-Bovino.belongsTo(Raza, { foreignKey: "Id_raza" });
+Raza.hasMany(Bovino, { foreignKey: "id_raza" });
+Bovino.belongsTo(Raza, { foreignKey: "id_raza" });
 
 // GRUPO -> BOVINO
-GrupoBovino.hasMany(Bovino, { foreignKey: "Id_grupo" });
-Bovino.belongsTo(GrupoBovino, { foreignKey: "Id_grupo" });
+GrupoBovino.hasMany(Bovino, { foreignKey: "id_grupo" });
+Bovino.belongsTo(GrupoBovino, { foreignKey: "id_grupo" });
 
 module.exports = {
   Bovino,

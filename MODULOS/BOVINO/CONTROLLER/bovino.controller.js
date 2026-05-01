@@ -6,9 +6,9 @@ exports.crear = async (req, res) => {
     console.log("BODY RECIBIDO:", req.body);
 
     const {
-      Id_grupo,
+      id_grupo,
       numero_crotal,
-      Id_raza,
+      id_raza,
       nombre,
       fecha_nacimiento,
       nombre_madre,
@@ -20,8 +20,8 @@ exports.crear = async (req, res) => {
 
     // Validaciones basicas obligatorias
     if (
-      !Id_grupo ||
-      !Id_raza ||
+      !id_grupo ||
+      !id_raza ||
       !nombre ||
       !fecha_nacimiento ||
       !sexo ||
@@ -33,9 +33,9 @@ exports.crear = async (req, res) => {
     }
 
     const bovino = await Bovino.create({
-      Id_grupo,
+      id_grupo,
       numero_crotal,
-      Id_raza,
+      id_raza,
       nombre,
       fecha_nacimiento,
       nombre_madre,

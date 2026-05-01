@@ -9,25 +9,25 @@ const MotivoVisita = require("./motivoVisita.model");
 const Bovino = require("../../BOVINO/MODEL/bovino.model");
 
 // VISITA ↔ VETERINARIO
-Veterinario.hasMany(Visita, { foreignKey: "Id_veterinario" });
-Visita.belongsTo(Veterinario, { foreignKey: "Id_veterinario" });
+Veterinario.hasMany(Visita, { foreignKey: "id_veterinario" });
+Visita.belongsTo(Veterinario, { foreignKey: "id_veterinario" });
 
 // VISITA ↔ BOVINO
-Bovino.hasMany(Visita, { foreignKey: "Id_bovino" });
-Visita.belongsTo(Bovino, { foreignKey: "Id_bovino" });
+Bovino.hasMany(Visita, { foreignKey: "id_bovino" });
+Visita.belongsTo(Bovino, { foreignKey: "id_bovino" });
 
 // VISITA ↔ MOTIVO (N:M)
 Visita.belongsToMany(Motivo, {
   through: MotivoVisita,
-  foreignKey: "Id_visita",
-  otherKey: "Id_motivo",
+  foreignKey: "id_visita",
+  otherKey: "id_motivo",
   as: "Motivos"
 });
 
 Motivo.belongsToMany(Visita, {
   through: MotivoVisita,
-  foreignKey: "Id_motivo",
-  otherKey: "Id_visita",
+  foreignKey: "id_motivo",
+  otherKey: "id_visita",
   as: "Visitas"
 });
 

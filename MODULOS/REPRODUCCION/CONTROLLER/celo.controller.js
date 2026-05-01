@@ -16,7 +16,7 @@ exports.crearCiclo = async (req, res) => {
 exports.obtenerCiclos = async (req, res) => {
   try {
     const lista = await Ciclo.findAll({
-      attributes: { exclude: ["Id_bovino"] },
+      attributes: { exclude: ["id_bovino"] },
       include: [
         {
           model: Bovino,
@@ -63,9 +63,9 @@ exports.actualizarCiclo = async (req, res) => {
 
     const camposPermitidos = {};
 
-    if (req.body.Id_bovino !== undefined) camposPermitidos.Id_bovino = req.body.Id_bovino;
-    if (req.body.Fecha_inicio !== undefined) camposPermitidos.Fecha_inicio = req.body.Fecha_inicio;
-    if (req.body.Fecha_fin !== undefined) camposPermitidos.Fecha_fin = req.body.Fecha_fin;
+    if (req.body.id_bovino !== undefined) camposPermitidos.id_bovino = req.body.id_bovino;
+    if (req.body.fecha_inicio !== undefined) camposPermitidos.fecha_inicio = req.body.fecha_inicio;
+    if (req.body.fecha_fin !== undefined) camposPermitidos.fecha_fin = req.body.fecha_fin;
     if (req.body.duracion !== undefined) camposPermitidos.duracion = req.body.duracion;
     if (req.body.observaciones !== undefined) camposPermitidos.observaciones = req.body.observaciones;
 
@@ -75,7 +75,7 @@ exports.actualizarCiclo = async (req, res) => {
     }
 
     const [actualizado] = await Ciclo.update(camposPermitidos, {
-      where: { Id_ciclo: id }
+      where: { id_ciclo: id }
     });
 
     if (!actualizado) {
@@ -100,7 +100,7 @@ exports.actualizarCiclo = async (req, res) => {
 exports.eliminarCiclo = async (req, res) => {
   try {
     const eliminado = await Ciclo.destroy({
-      where: { Id_ciclo: req.params.id }
+      where: { id_ciclo: req.params.id }
     });
 
     if (!eliminado) {

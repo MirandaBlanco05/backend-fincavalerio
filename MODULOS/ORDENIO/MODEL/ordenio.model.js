@@ -3,16 +3,16 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../../../CORE/DATABASE/sequelize");
 
 const Ordenio = sequelize.define("ORDENIO", {
-  Id_ordenio: {
+  id_ordenio: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  Id_bovino: {
+  id_bovino: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  Id_empleado: {
+  id_empleado: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
@@ -20,19 +20,20 @@ const Ordenio = sequelize.define("ORDENIO", {
     type: DataTypes.DATEONLY,
     allowNull: true
   },
-  Momento_dia: {
+  momento_dia: {
     type: DataTypes.STRING(30),
     allowNull: true,
     validate: {
       isIn: [["Mañana", "Tarde"]]
     }
   },
-  Cantidad_total: {
+  cantidad_total: {
     type: DataTypes.STRING(20),
     allowNull: true
   }
 }, {
   tableName: "ORDENIO",
+  schema: "public",
   timestamps: false
 });
 

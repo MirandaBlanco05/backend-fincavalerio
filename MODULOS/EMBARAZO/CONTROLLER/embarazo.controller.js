@@ -5,20 +5,20 @@ exports.crear = async (req, res) => {
   try {
     console.log("BODY RECIBIDO:", req.body);
  
-    const { Id_inseminacion, Id_veterinario, fase, Fecha_secado, Fecha_prevista_parto } = req.body;
+    const { id_inseminacion, id_veterinario, fase, fecha_secado, fecha_prevista_parto } = req.body;
  
-    if (!Id_inseminacion || !Id_veterinario || !Fecha_prevista_parto) {
+    if (!id_inseminacion || !id_veterinario || !fecha_prevista_parto) {
       return res.status(400).json({
         error: "Faltan campos obligatorios: Id_inseminacion, Id_veterinario, Fecha_prevista_parto"
       });
     }
  
     const embarazo = await Embarazo.create({
-      Id_inseminacion,
-      Id_veterinario,
+      id_inseminacion,
+      id_veterinario,
       fase,
-      Fecha_secado: Fecha_secado || null,
-      Fecha_prevista_parto
+      fecha_secado: fecha_secado || null,
+      fecha_prevista_parto
     });
  
     res.status(201).json({ mensaje: "Embarazo registrado correctamente", embarazo });
@@ -41,7 +41,7 @@ exports.listar = async (req, res) => {
         {
           model: Inseminacion,
           as: "INSEMINACION",
-          attributes: ["Id_inseminacion", "fecha"]
+          attributes: ["id_inseminacion", "fecha"]
         }
       ]
     });

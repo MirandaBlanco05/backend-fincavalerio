@@ -7,20 +7,21 @@ const Login = sequelize.define("LOGIN", {
     primaryKey: true,
     autoIncrement: true
   },
-  Usuario: {
+  usuario: {
     type: DataTypes.STRING(20),
     allowNull: false
   },
-  Contraseña: {
+  contrasena: {
     type: DataTypes.STRING(20),
     allowNull: false
   },
-  Tipo_usuario: {
+  tipo_usuario: {
     type: DataTypes.STRING(50),
     allowNull: true
   }
 }, {
   tableName: "LOGIN",
+  schema: "public",
   timestamps: false
 });
 

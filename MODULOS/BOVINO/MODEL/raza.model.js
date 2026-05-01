@@ -3,7 +3,7 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../../../CORE/DATABASE/sequelize");
 
 const Raza = sequelize.define("RAZA", {
-  Id_raza: {
+  id_raza: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
@@ -22,7 +22,9 @@ const Raza = sequelize.define("RAZA", {
   }
 }, {
   tableName: "RAZA",
-  timestamps: false
+  schema: "public",
+  timestamps: false,
+  freezeTableName: true
 });
 
 module.exports = Raza;

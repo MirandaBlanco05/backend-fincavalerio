@@ -3,16 +3,16 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../../../CORE/DATABASE/sequelize");
 
 const Visita = sequelize.define("VISITA", {
-  Id_visita: {
+  id_visita: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  Id_veterinario: {
+  id_veterinario: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  Id_bovino: {
+  id_bovino: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
@@ -30,6 +30,7 @@ const Visita = sequelize.define("VISITA", {
   }
 }, {
   tableName: "VISITA",
+   schema: "public",
   timestamps: false
 });
 

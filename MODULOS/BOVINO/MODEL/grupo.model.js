@@ -3,7 +3,7 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../../../CORE/DATABASE/sequelize");
 
 const GrupoBovino = sequelize.define("GRUPO_BOVINO", {
-  Id_grupo: {
+  id_grupo: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
@@ -18,6 +18,8 @@ const GrupoBovino = sequelize.define("GRUPO_BOVINO", {
   }
 }, {
   tableName: "GRUPO_BOVINO",
+  schema: "public",
+  freezeTableName: true,
   timestamps: false
 });
 

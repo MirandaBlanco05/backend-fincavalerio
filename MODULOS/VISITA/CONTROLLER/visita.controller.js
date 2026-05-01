@@ -17,11 +17,11 @@ exports.crear = async (req, res) => {
       return res.status(400).json({ error: "No se enviaron datos" });
     }
 
-    const { Id_veterinario, Id_bovino, fecha, motivos,observaciones,hora } = req.body;
+    const { id_veterinario, id_bovino, fecha, motivos,observaciones,hora } = req.body;
 
     const visita = await Visita.create({
-      Id_veterinario,
-      Id_bovino,
+      id_veterinario,
+      id_bovino,
       fecha,
       observaciones,
       hora
@@ -133,11 +133,36 @@ exports.eliminar = async (req, res) => {
     const { id } = req.params;
 
     await Visita.destroy({
-      where: { Id_visita: id }
+      where: { id_visita: id }
     });
 
     res.json({ mensaje: "Visita eliminada correctamente" });
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+//actualizar 
+exports.actualizar = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { id_veterinario, id_bovino, fecha, observaciones, hora, motivos } = req.body;
+
+    const visita = await Visita.findByPk(id);
+    if (!visita) {
+      return res.status(404).json({ error: "Visita no encontrada" });
+    }
+
+    await visita.update({ id_veterinario, id_bovino, fecha, observaciones, hora });
+
+    if (motivos && motivos.length > 0) {
+      await visita.setMotivos(motivos);
+    }
+
+    res.json({ mensaje: "Visita actualizada correctamente" });
+
+  } catch (error) {
+    console.error("ERROR ACTUALIZAR VISITA:", error);
     res.status(500).json({ error: error.message });
   }
 };

@@ -3,20 +3,20 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../../../CORE/DATABASE/sequelize");
  
 const Parto = sequelize.define("PARTO", {
-  Id_parto: {
+  id_parto: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  Id_embarazo: {
+  id_embarazo: {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  Fecha_parto: {
+  fecha_parto: {
     type: DataTypes.DATEONLY,
     allowNull: false
   },
-  Numero_crias: {
+  numero_crias: {
     type: DataTypes.INTEGER,
     allowNull: true
   },
@@ -26,6 +26,7 @@ const Parto = sequelize.define("PARTO", {
   }
 }, {
   tableName: "PARTO",
+  schema: "public",
   timestamps: false
 });
  

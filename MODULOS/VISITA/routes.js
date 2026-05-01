@@ -10,4 +10,6 @@ router.get("/:id", controller.obtenerPorId);
 
 router.delete("/eliminar/:id", controller.eliminar);
 
+router.put("/update/:id", controller.actualizar);
+
 module.exports = router;
