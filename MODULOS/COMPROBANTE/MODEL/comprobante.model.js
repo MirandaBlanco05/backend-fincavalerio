@@ -1,23 +1,28 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../../../CORE/DATABASE/sequelize");
 
-const Provincia = sequelize.define("PROVINCIA", {
-  id_provincia: {
+const ComprobanteFiscal = sequelize.define("COMPROBANTE_FISCAL", {
+  id_comprobante: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
   nombre: {
-    type: DataTypes.STRING(50),
+    type: DataTypes.STRING(100),
     allowNull: false
   },
-  id_pais: {
+  tipo: {
     type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  serie: {
+    type: DataTypes.STRING(20),
     allowNull: false
   }
 }, {
-  tableName: "PROVINCIA",
+  tableName: "COMPROBANTE_FISCAL",
+  schema: "public",
   timestamps: false
 });
 
-module.exports = Provincia;
+module.exports = ComprobanteFiscal;

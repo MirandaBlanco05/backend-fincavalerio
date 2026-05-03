@@ -1,118 +1,97 @@
-const Cliente = require("../MODEL/cliente.model");
-const Provincia = require("../MODEL/provincia.model");
+const { Cliente, Provincia } = require("../MODEL");
 
-//Obtener todos
-exports.obtenerClientes = async (req, res) => {
+/* LISTAR */
+exports.listar = async (req, res) => {
   try {
-    const lista = await Cliente.findAll({
-      attributes: { exclude: ["id_provincia"] },
-      include: [
-        {
-          model: Provincia,
-          as: "provincia",
-          attributes: ["id_provincia", "nombre"]
-        }
-      ]
+    const clientes = await Cliente.findAll({
+      include: [{ model: Provincia, as: "provincia", attributes: ["nombre"] }],
+      order: [["nombre", "ASC"]]
     });
-    res.json(lista);
+    res.json(clientes);
   } catch (error) {
+    console.error("ERROR LISTAR CLIENTE:", error);
     res.status(500).json({ error: error.message });
   }
 };
 
-//Obtener por ID
-exports.obtenerClientePorId = async (req, res) => {
+/* OBTENER POR ID */
+exports.obtener = async (req, res) => {
   try {
     const { id } = req.params;
     const cliente = await Cliente.findByPk(id, {
-      include: [
-        {
-          model: Provincia,
-          as: "provincia",
-          attributes: ["id_provincia", "nombre"]
-        }
-      ]
+      include: [{ model: Provincia, as: "provincia", attributes: ["nombre"] }]
     });
-
-    if (!cliente) {
-      return res.status(404).json({ error: "Cliente no encontrado" });
-    }
-
+    if (!cliente) return res.status(404).json({ error: "Cliente no encontrado" });
     res.json(cliente);
   } catch (error) {
+    console.error("ERROR OBTENER CLIENTE:", error);
     res.status(500).json({ error: error.message });
   }
 };
 
-//Crear
-exports.crearCliente = async (req, res) => {
+/* CREAR */
+exports.crear = async (req, res) => {
   try {
-    const nuevo = await Cliente.create(req.body);
+    const { rnc, telefono, correo, nombre, id_provincia, estado } = req.body;
 
-    const clienteCreado = await Cliente.findByPk(nuevo.Id_cliente, {
-      include: [
-        {
-          model: Provincia,
-          as: "provincia",
-          attributes: ["id_provincia", "nombre"]
-        }
-      ]
+    if (!nombre || nombre.trim() === "") {
+      return res.status(400).json({ error: "El nombre del cliente es obligatorio" });
+    }
+
+    const cliente = await Cliente.create({
+      rnc:          rnc?.trim()      || null,
+      telefono:     telefono?.trim() || null,
+      correo:       correo?.trim()   || null,
+      nombre:       nombre.trim(),
+      id_provincia: id_provincia     || null,
+      estado:       estado           || "activo"
     });
 
-    res.status(201).json({
-      message: "Cliente creado correctamente",
-      cliente: clienteCreado
-    });
+    res.status(201).json({ mensaje: "Cliente registrado correctamente", cliente });
   } catch (error) {
+    console.error("ERROR CREAR CLIENTE:", error);
     res.status(500).json({ error: error.message });
   }
 };
 
-//Actualizar
-exports.actualizarCliente = async (req, res) => {
+/* ACTUALIZAR */
+exports.actualizar = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rnc, telefono, correo, nombre, id_provincia, estado } = req.body;
+
+    const cliente = await Cliente.findByPk(id);
+    if (!cliente) return res.status(404).json({ error: "Cliente no encontrado" });
+
+    if (!nombre || nombre.trim() === "") {
+      return res.status(400).json({ error: "El nombre del cliente es obligatorio" });
+    }
+
+    await cliente.update({
+      rnc:          rnc          ?? cliente.rnc,
+      telefono:     telefono     ?? cliente.telefono,
+      correo:       correo       ?? cliente.correo,
+      nombre:       nombre.trim(),
+      id_provincia: id_provincia ?? cliente.id_provincia,
+      estado:       estado       ?? cliente.estado
+    });
+
+    res.json({ mensaje: "Cliente actualizado correctamente", cliente });
+  } catch (error) {
+    console.error("ERROR ACTUALIZAR CLIENTE:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+/* ELIMINAR */
+exports.eliminar = async (req, res) => {
   try {
     const { id } = req.params;
     const cliente = await Cliente.findByPk(id);
-
-    if (!cliente) {
-      return res.status(404).json({ error: "Cliente no encontrado" });
-    }
-
-    await cliente.update(req.body);
-
-    const clienteActualizado = await Cliente.findByPk(id, {
-      include: [
-        {
-          model: Provincia,
-          as: "provincia",
-          attributes: ["id_provincia", "nombre"]
-        }
-      ]
-    });
-
-    res.json({
-      message: "Cliente actualizado correctamente",
-      cliente: clienteActualizado
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-//Eliminar
-exports.eliminarCliente = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const cliente = await Cliente.findByPk(id);
-
-    if (!cliente) {
-      return res.status(404).json({ error: "Cliente no encontrado" });
-    }
-
+    if (!cliente) return res.status(404).json({ error: "Cliente no encontrado" });
     await cliente.destroy();
-
-    res.json({ message: "Cliente eliminado correctamente" });
+    res.json({ mensaje: "Cliente eliminado correctamente" });
   } catch (error) {
+    console.error("ERROR ELIMINAR CLIENTE:", error);
     res.status(500).json({ error: error.message });
   }
 };

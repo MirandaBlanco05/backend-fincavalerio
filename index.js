@@ -21,6 +21,13 @@ require("./MODULOS/EMBARAZO/MODEL");
 require("./MODULOS/EMPLEADO/MODEL");
 require("./MODULOS/PRODUCTO/MODEL");
 require("./MODULOS/LOGIN/MODEL/login.model");
+require("./MODULOS/DIRECCION/PROVINCIA/MODEL");
+require("./MODULOS/CLIENTE/MODEL");
+require("./MODULOS/COMPROBANTE/MODEL");
+require("./MODULOS/VENTA/MODEL");
+require("./MODULOS/METODOPAGO/MODEL");
+require("./MODULOS/DETALLEVENTA/MODEL");
+
 
 // ====================
 // Conexion DB
@@ -50,6 +57,13 @@ app.use("/api/parto", require("./MODULOS/PARTO/routes"));
 app.use("/api/empleado", require("./MODULOS/EMPLEADO/routes"));
 app.use("/api/ordenio", require("./MODULOS/ORDENIO/routes"));
 app.use("/api/producto", require("./MODULOS/PRODUCTO/routes"));
+app.use("/api/pais", require("./MODULOS/DIRECCION/PAIS/routes"));
+app.use("/api/provincia", require("./MODULOS/DIRECCION/PROVINCIA/routes"));
+app.use("/api/cliente", require("./MODULOS/CLIENTE/routes"));
+app.use("/api/ncf", require("./MODULOS/COMPROBANTE/routes"));
+app.use("/api/venta", require("./MODULOS/VENTA/routes"));
+app.use("/api/metodo-pago", require("./MODULOS/METODOPAGO/routes"));
+app.use("/api/detalleVenta", require("./MODULOS/DETALLEVENTA/routes.js"));
 
 // ====================
 // Puerto servidor

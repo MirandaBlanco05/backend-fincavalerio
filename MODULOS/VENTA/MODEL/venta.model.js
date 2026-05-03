@@ -1,31 +1,27 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../../../CORE/DATABASE/sequelize");
 
-const Cliente = sequelize.define("CLIENTE", {
-  id_cliente: {
+const Venta = sequelize.define("VENTA", {
+  id_venta: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  rnc: {
-    type: DataTypes.STRING(20),
-    allowNull: true
-  },
-  telefono: {
-    type: DataTypes.STRING(20),
-    allowNull: false
-  },
-  correo: {
-    type: DataTypes.STRING(100),
-    allowNull: false
-  },
-  nombre: {
-    type: DataTypes.STRING(100),
-    allowNull: false
-  },
-  id_provincia: {
+  id_cliente: {
     type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  fecha: {
+    type: DataTypes.DATEONLY,
+    allowNull: false
+  },
+  concepto: {
+    type: DataTypes.STRING(255),
     allowNull: true
+  },
+  ncf: {
+    type: DataTypes.INTEGER,
+    allowNull: false
   },
   estado: {
     type: DataTypes.STRING(20),
@@ -33,9 +29,9 @@ const Cliente = sequelize.define("CLIENTE", {
     defaultValue: "activo"
   }
 }, {
-  tableName: "CLIENTE",
+  tableName: "VENTA",
   schema: "public",
   timestamps: false
 });
 
-module.exports = Cliente;
+module.exports = Venta;

@@ -1,6 +1,6 @@
 const express = require("express");
 const router  = express.Router();
-const ctrl    = require("./CONTROLLER/cliente.controller");
+const ctrl    = require("./CONTROLLER/venta.controller");
 
 router.get("/listar",       ctrl.listar);
 router.get("/:id",    ctrl.obtener);
