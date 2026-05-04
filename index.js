@@ -27,7 +27,10 @@ require("./MODULOS/COMPROBANTE/MODEL");
 require("./MODULOS/VENTA/MODEL");
 require("./MODULOS/METODOPAGO/MODEL");
 require("./MODULOS/DETALLEVENTA/MODEL");
-
+require("./MODULOS/PROVEEDOR/MODEL");
+require("./MODULOS/INSUMO/MODEL");
+require("./MODULOS/COMPRA/MODEL");
+require("./MODULOS/DETALLECOMPRA/MODEL");
 
 // ====================
 // Conexion DB
@@ -64,6 +67,11 @@ app.use("/api/ncf", require("./MODULOS/COMPROBANTE/routes"));
 app.use("/api/venta", require("./MODULOS/VENTA/routes"));
 app.use("/api/metodo-pago", require("./MODULOS/METODOPAGO/routes"));
 app.use("/api/detalleVenta", require("./MODULOS/DETALLEVENTA/routes.js"));
+app.use("/api/proveedor",  require("./MODULOS/PROVEEDOR/routes")); 
+app.use("/api/insumo", require("./MODULOS/INSUMO/routes"));
+app.use("/api/compra", require("./MODULOS/COMPRA/routes"));
+app.use("/api/detalleCompra", require("./MODULOS/DETALLECOMPRA/routes"));
+
 
 // ====================
 // Puerto servidor

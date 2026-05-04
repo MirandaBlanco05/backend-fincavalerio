@@ -1,5 +1,5 @@
 // MODULOS/DIRECCION/PROVINCIA/CONTROLLER/provincia.controller.js
-const Provincia = require("../MODEL");
+const { Provincia } = require("../MODEL");
 const Pais = require("../../PAIS/MODEL/pais.model");
 
 /* LISTAR */

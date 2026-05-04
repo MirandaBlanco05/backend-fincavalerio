@@ -1,4 +1,4 @@
-const Pais      = require("../../PAIS/MODEL/pais.model");
+const Pais      = require("../../PAIS/MODEL/pais.model")
 const Provincia = require("./provincia.model");
 
 Pais.hasMany(Provincia,   { foreignKey: "id_pais", as: "provincias" });
