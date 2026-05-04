@@ -1,0 +1,184 @@
+const { Tratamiento, Enfermedad, Empleado } = require("../MODEL");
+const Historial           = require("../../HISTORIAL/MODEL/historial.model");
+const HistorialEnfermedad = require("../../HISTORIAL/MODEL/historialenfermedad.model");
+const Bovino              = require("../../BOVINO/MODEL/bovino.model");
+
+/* ══ LISTAR ══ */
+exports.listar = async (req, res) => {
+  try {
+    const tratamientos = await Tratamiento.findAll({
+      include: [
+        { model: Empleado, as: "empleado", attributes: ["nombre"] },
+        {
+          model: Enfermedad,
+          as: "enfermedad",
+          attributes: ["nombre", "causa"],
+          include: [
+            {
+              model: Historial,
+              as: "historiales",
+              attributes: ["id_historial"],
+              through: { attributes: [] },
+              include: [
+                { model: Bovino, as: "bovino", attributes: ["id_bovino", "nombre", "numero_crotal"] }
+              ]
+            }
+          ]
+        }
+      ],
+      order: [["fecha_inicio", "DESC"]]
+    });
+
+    const resultado = tratamientos.map(t => ({
+      id_tratamiento:   t.id_tratamiento,
+      nombre:           t.nombre,
+      tipo_tratamiento: t.tipo_tratamiento,
+      fecha_inicio:     t.fecha_inicio,
+      fecha_fin:        t.fecha_fin,
+      empleado:         t.empleado?.nombre || null,
+      enfermedad:       t.enfermedad?.nombre || null,
+      causa:            t.enfermedad?.causa  || null,
+      bovinos: t.enfermedad?.historiales?.map(h => ({
+        id_bovino:    h.bovino?.id_bovino,
+        nombre:       h.bovino?.nombre,
+        numero_arete: h.bovino?.numero_arete
+      })).filter(b => b.id_bovino) || []
+    }));
+
+    res.json(resultado);
+  } catch (error) {
+    console.error("ERROR LISTAR TRATAMIENTO:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+/* ══ OBTENER POR ID ══ */
+exports.obtener = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const t = await Tratamiento.findByPk(id, {
+      include: [
+        { model: Empleado, as: "empleado", attributes: ["nombre"] },
+        {
+          model: Enfermedad,
+          as: "enfermedad",
+          attributes: ["nombre", "causa"],
+          include: [
+            {
+              model: Historial,
+              as: "historiales",
+              attributes: ["id_historial"],
+              through: { attributes: [] },
+              include: [
+                { model: Bovino, as: "bovino", attributes: ["id_bovino", "nombre", "numero_crotal"] }
+              ]
+            }
+          ]
+        }
+      ]
+    });
+
+    if (!t) return res.status(404).json({ error: "Tratamiento no encontrado" });
+
+    res.json({
+      id_tratamiento:   t.id_tratamiento,
+      nombre:           t.nombre,
+      tipo_tratamiento: t.tipo_tratamiento,
+      fecha_inicio:     t.fecha_inicio,
+      fecha_fin:        t.fecha_fin,
+      empleado:         t.empleado?.nombre || null,
+      enfermedad:       t.enfermedad?.nombre || null,
+      causa:            t.enfermedad?.causa  || null,
+      bovinos: t.enfermedad?.historiales?.map(h => ({
+        id_bovino:    h.bovino?.id_bovino,
+        nombre:       h.bovino?.nombre,
+        numero_arete: h.bovino?.numero_arete
+      })).filter(b => b.id_bovino) || []
+    });
+  } catch (error) {
+    console.error("ERROR OBTENER TRATAMIENTO:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+/* ══ LISTAR POR ENFERMEDAD ══ */
+exports.listarPorEnfermedad = async (req, res) => {
+  try {
+    const { id_enfermedad } = req.params;
+    const tratamientos = await Tratamiento.findAll({
+      where: { id_enfermedad },
+      include: [
+        { model: Empleado, as: "empleado", attributes: ["nombre"] }
+      ],
+      order: [["fecha_inicio", "DESC"]]
+    });
+    res.json(tratamientos);
+  } catch (error) {
+    console.error("ERROR LISTAR TRATAMIENTO POR ENFERMEDAD:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+/* ══ CREAR ══ */
+exports.crear = async (req, res) => {
+  try {
+    const { id_enfermedad, id_empleado, nombre, tipo_tratamiento, fecha_inicio, fecha_fin } = req.body;
+
+    if (!id_enfermedad)  return res.status(400).json({ error: "La enfermedad es obligatoria" });
+    if (!id_empleado)    return res.status(400).json({ error: "El empleado es obligatorio" });
+    if (!nombre?.trim()) return res.status(400).json({ error: "El nombre es obligatorio" });
+
+    const tratamiento = await Tratamiento.create({
+      id_enfermedad,
+      id_empleado,
+      nombre:           nombre.trim(),
+      tipo_tratamiento: tipo_tratamiento?.trim() || null,
+      fecha_inicio:     fecha_inicio             || null,
+      fecha_fin:        fecha_fin                || null
+    });
+
+    res.status(201).json({ mensaje: "Tratamiento registrado correctamente", tratamiento });
+  } catch (error) {
+    console.error("ERROR CREAR TRATAMIENTO:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+/* ══ ACTUALIZAR ══ */
+exports.actualizar = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { id_enfermedad, id_empleado, nombre, tipo_tratamiento, fecha_inicio, fecha_fin } = req.body;
+
+    const tratamiento = await Tratamiento.findByPk(id);
+    if (!tratamiento) return res.status(404).json({ error: "Tratamiento no encontrado" });
+
+    await tratamiento.update({
+      id_enfermedad:    id_enfermedad            ?? tratamiento.id_enfermedad,
+      id_empleado:      id_empleado              ?? tratamiento.id_empleado,
+      nombre:           nombre?.trim()           ?? tratamiento.nombre,
+      tipo_tratamiento: tipo_tratamiento?.trim() ?? tratamiento.tipo_tratamiento,
+      fecha_inicio:     fecha_inicio             ?? tratamiento.fecha_inicio,
+      fecha_fin:        fecha_fin                ?? tratamiento.fecha_fin
+    });
+
+    res.json({ mensaje: "Tratamiento actualizado correctamente", tratamiento });
+  } catch (error) {
+    console.error("ERROR ACTUALIZAR TRATAMIENTO:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+/* ══ ELIMINAR ══ */
+exports.eliminar = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const tratamiento = await Tratamiento.findByPk(id);
+    if (!tratamiento) return res.status(404).json({ error: "Tratamiento no encontrado" });
+    await tratamiento.destroy();
+    res.json({ mensaje: "Tratamiento eliminado correctamente" });
+  } catch (error) {
+    console.error("ERROR ELIMINAR TRATAMIENTO:", error);
+    res.status(500).json({ error: error.message });
+  }
+};

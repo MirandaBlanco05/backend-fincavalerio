@@ -31,6 +31,11 @@ require("./MODULOS/PROVEEDOR/MODEL");
 require("./MODULOS/INSUMO/MODEL");
 require("./MODULOS/COMPRA/MODEL");
 require("./MODULOS/DETALLECOMPRA/MODEL");
+require("./MODULOS/ENFERMEDAD/MODEL");
+require("./MODULOS/HISTORIAL/MODEL");
+require("./MODULOS/TRATAMIENTO/MODEL");
+require("./MODULOS/DOSIS/MODEL");
+
 
 // ====================
 // Conexion DB
@@ -67,11 +72,14 @@ app.use("/api/ncf", require("./MODULOS/COMPROBANTE/routes"));
 app.use("/api/venta", require("./MODULOS/VENTA/routes"));
 app.use("/api/metodo-pago", require("./MODULOS/METODOPAGO/routes"));
 app.use("/api/detalleVenta", require("./MODULOS/DETALLEVENTA/routes.js"));
-app.use("/api/proveedor",  require("./MODULOS/PROVEEDOR/routes")); 
+app.use("/api/proveedor", require("./MODULOS/PROVEEDOR/routes"));
 app.use("/api/insumo", require("./MODULOS/INSUMO/routes"));
 app.use("/api/compra", require("./MODULOS/COMPRA/routes"));
 app.use("/api/detalleCompra", require("./MODULOS/DETALLECOMPRA/routes"));
-
+app.use("/api/enfermedad", require("./MODULOS/ENFERMEDAD/routes"));
+app.use("/api/historial", require("./MODULOS/HISTORIAL/routes"));
+app.use("/api/tratamiento", require("./MODULOS/TRATAMIENTO/routes"));
+app.use("/api/dosis", require("./MODULOS/DOSIS/routes"));
 
 // ====================
 // Puerto servidor
