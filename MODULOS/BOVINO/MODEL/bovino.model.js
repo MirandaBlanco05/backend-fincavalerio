@@ -21,11 +21,11 @@ const Bovino = sequelize.define("BOVINO", {
   },
   nombre: {
     type: DataTypes.STRING(30),
-    allowNull: false
+    allowNull: true
   },
   fecha_nacimiento: {
     type: DataTypes.DATEONLY,
-    allowNull: false
+    allowNull: true
   },
   nombre_madre: {
     type: DataTypes.STRING(30),

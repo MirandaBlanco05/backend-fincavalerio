@@ -6,7 +6,7 @@ exports.crear = async (req, res) => {
   try {
     console.log("BODY RECIBIDO:", req.body);
 
-    const { nombre, nacionalidad, cedula, telefono, salario } = req.body;
+    const { nombre, nacionalidad, cedula, telefono, salario, contrato,puesto } = req.body;
 
     if (!nombre || !nacionalidad || !telefono) {
       return res.status(400).json({
@@ -19,7 +19,9 @@ exports.crear = async (req, res) => {
       nacionalidad,
       cedula,
       telefono,
-      salario
+      salario,
+      contrato,
+      puesto
     });
 
     res.status(201).json({

@@ -27,6 +27,13 @@ const Empleado = sequelize.define("EMPLEADO", {
   salario: {
     type: DataTypes.REAL,
     allowNull: true
+  },
+  contrato: {
+    type: DataTypes.STRING(50),
+    allowNull: true
+  },puesto: {
+    type: DataTypes.STRING(50),
+    allowNull: true
   }
 }, {
   tableName: "EMPLEADO",
