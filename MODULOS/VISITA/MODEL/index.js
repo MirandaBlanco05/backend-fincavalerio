@@ -4,7 +4,7 @@ const { DataTypes } = require("sequelize");
 const Veterinario = require("./veterinario.model");
 const Visita = require("./visita.model");
 const Motivo = require("./motivo.model");
-const MotivoVisita = require("./motivoVisita.model");
+const MotivoVisita = require("./motivovisita.model");
 
 const Bovino = require("../../BOVINO/MODEL/bovino.model");
 
