@@ -20,9 +20,11 @@ exports.crear = async (req, res) => {
       });
     }
 
+    const toInt = (val) => (val && val !== "") ? parseInt(val) : null;
+
     const ordenio = await Ordenio.create({
-      id_bovino: parseInt(id_bovino),
-      id_empleado: parseInt(id_empleado),
+      id_bovino: toInt(id_bovino),
+      id_empleado: toInt(id_empleado),
       fecha: fecha || null,
       momento_dia: momento_dia || null,
       cantidad_total: cantidad_total ? String(cantidad_total) : null

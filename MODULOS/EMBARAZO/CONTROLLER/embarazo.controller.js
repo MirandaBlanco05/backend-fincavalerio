@@ -13,9 +13,11 @@ exports.crear = async (req, res) => {
       });
     }
  
+    const toInt = (val) => (val && val !== "") ? parseInt(val) : null;
+
     const embarazo = await Embarazo.create({
-      id_inseminacion: parseInt(id_inseminacion),
-      id_veterinario: parseInt(id_veterinario),
+      id_inseminacion: toInt(id_inseminacion),
+      id_veterinario: toInt(id_veterinario),
       fase: fase || null,
       fecha_secado: fecha_secado || null,
       fecha_prevista_parto

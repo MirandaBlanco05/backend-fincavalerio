@@ -8,10 +8,12 @@ const Bovino = require("../../BOVINO/MODEL/bovino.model");
 exports.crearInseminacion = async (req, res) => {
   try {
     const { id_veterinario, id_ciclo } = req.body;
+    const toInt = (val) => (val && val !== "") ? parseInt(val) : null;
+
     const nueva = await Inseminacion.create({
       ...req.body,
-      id_veterinario: id_veterinario ? parseInt(id_veterinario) : null,
-      id_ciclo: id_ciclo ? parseInt(id_ciclo) : null
+      id_veterinario: toInt(id_veterinario),
+      id_ciclo: toInt(id_ciclo)
     });
     res.status(201).json(nueva);
   } catch (error) {

@@ -20,10 +20,12 @@ exports.crear = async (req, res) => {
       return res.status(404).json({ error: "El embarazo indicado no existe" });
     }
  
+    const toInt = (val) => (val && val !== "") ? parseInt(val) : null;
+
     const parto = await Parto.create({
-      id_embarazo: parseInt(id_embarazo),
+      id_embarazo: toInt(id_embarazo),
       fecha_parto,
-      numero_crias: numero_crias ? parseInt(numero_crias) : null,
+      numero_crias: toInt(numero_crias),
       observaciones: observaciones || null
     });
  

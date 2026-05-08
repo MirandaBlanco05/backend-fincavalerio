@@ -25,15 +25,17 @@ exports.crear = async (req, res) => {
       });
     }
 
+    const toInt = (val) => (val && val !== "") ? parseInt(val) : null;
+
     const bovino = await Bovino.create({
-      id_grupo: parseInt(id_grupo),
-      numero_crotal: numero_crotal ? parseInt(numero_crotal) : null,
-      id_raza: parseInt(id_raza),
+      id_grupo: toInt(id_grupo),
+      numero_crotal: toInt(numero_crotal),
+      id_raza: toInt(id_raza),
       nombre: nombre || 'Sin nombre',
       fecha_nacimiento: fecha_nacimiento || null,
       nombre_madre,
       sexo,
-      edad: edad ? parseInt(edad) : null,
+      edad: toInt(edad),
       estado,
       peso
     });
