@@ -2,8 +2,7 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
-const { conectarDB } = require("./CORE/DATABASE/sequelize");
-
+const { conectarDB, sequelize } = require("./CORE/DATABASE/sequelize"); 
 const app = express();
 
 // Middlewares
@@ -40,7 +39,20 @@ require("./MODULOS/DOSIS/MODEL");
 // ====================
 // Conexion DB
 // ====================
-conectarDB();
+
+const iniciar = async () => {
+  try {
+    await conectarDB();
+    await sequelize.sync({ alter: true });
+
+    console.log("✅ Tablas sincronizadas");
+
+  } catch (error) {
+    console.error("❌ Error:", error);
+  }
+};
+
+iniciar();
 
 // ====================
 // Ruta test
@@ -80,6 +92,13 @@ app.use("/api/enfermedad", require("./MODULOS/ENFERMEDAD/routes"));
 app.use("/api/historial", require("./MODULOS/HISTORIAL/routes"));
 app.use("/api/tratamiento", require("./MODULOS/TRATAMIENTO/routes"));
 app.use("/api/dosis", require("./MODULOS/DOSIS/routes"));
+// ---- Routers de los 6 dashboards ----
+app.use('/api/dashboard/ventas',       require('./MODULOS/DASHBOARD/routes.js'));
+app.use('/api/dashboard/compras',      require('./MODULOS/DASHBOARD/routes.js'));
+app.use('/api/dashboard/reproduccion', require('./MODULOS/DASHBOARD/routes.js'));
+app.use('/api/dashboard/salud',        require('./MODULOS/DASHBOARD/routes.js'));
+app.use('/api/dashboard/animales',     require('./MODULOS/DASHBOARD/routes.js'));
+app.use('/api/dashboard/ordeno',       require('./MODULOS/DASHBOARD/routes.js'));
 
 // ====================
 // Puerto servidor

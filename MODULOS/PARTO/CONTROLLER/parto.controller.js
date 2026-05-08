@@ -38,7 +38,7 @@ exports.crear = async (req, res) => {
 exports.listar = async (req, res) => {
   try {
     const partos = await Parto.findAll({
-      order: [["Fecha_parto", "DESC"]]
+      order: [["fecha_parto", "DESC"]]
     });
 
     res.json(partos);
