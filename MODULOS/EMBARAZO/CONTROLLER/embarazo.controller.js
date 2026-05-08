@@ -41,7 +41,15 @@ exports.listar = async (req, res) => {
         {
           model: Inseminacion,
           as: "INSEMINACION",
-          attributes: ["id_inseminacion", "fecha"]
+          include: [{
+            model: require("../../REPRODUCCION/MODEL/celo.model"),
+            as: "ciclo",
+            include: [{
+              model: require("../../BOVINO/MODEL/bovino.model"),
+              as: "bovino",
+              attributes: ["nombre"]
+            }]
+          }]
         }
       ]
     });
