@@ -68,6 +68,9 @@ app.get("/api/test", (req, res) => {
 // Rutas API
 // ====================
 app.use("/api/visita", require("./MODULOS/VISITA/routes"));
+app.use("/api/veterinario", require("./MODULOS/VISITA/veterinario.routes"));
+app.use("/api/grupo", require("./MODULOS/BOVINO/grupo.routes"));
+app.use("/api/raza", require("./MODULOS/BOVINO/raza.routes"));
 app.use("/api/bovino", require("./MODULOS/BOVINO/routes"));
 app.use("/api/login", require("./MODULOS/LOGIN/routes"));
 app.use("/api/ciclo", require("./MODULOS/REPRODUCCION/routes"));

@@ -1,0 +1,118 @@
+const express = require("express");
+const cors = require("cors");
+require("dotenv").config();
+
+// Importar todos los modelos ANTES de las rutas (para cargar relaciones)
+require("./MODULOS/VISITA/MODEL");
+require("./MODULOS/BOVINO/MODEL");
+require("./MODULOS/GRUPO/MODEL");
+require("./MODULOS/RAZA/MODEL");
+require("./MODULOS/EMPLEADO/MODEL");
+require("./MODULOS/VACUNA/MODEL");
+require("./MODULOS/TRATAMIENTO/MODEL");
+require("./MODULOS/ENFERMEDAD/MODEL");
+require("./MODULOS/CELO/MODEL");
+require("./MODULOS/INSEMINACION/MODEL");
+require("./MODULOS/EMBARAZO/MODEL");
+require("./MODULOS/PARTO/MODEL");
+require("./MODULOS/ORDENIO/MODEL");
+require("./MODULOS/PRODUCCION/MODEL");
+require("./MODULOS/INSUMO/MODEL");
+require("./MODULOS/PROVEEDOR/MODEL");
+require("./MODULOS/COMPRA/MODEL");
+require("./MODULOS/VENTA/MODEL");
+
+const { conectarDB } = require("./CORE/DATABASE/sequelize");
+
+const app = express();
+
+// Middlewares globales
+app.use(cors()); 
+app.use(express.json());
+
+// Conectar a la base de datos
+conectarDB();
+
+// Ruta de prueba
+app.get("/api/test", (req, res) => {
+  res.json({
+    mensaje: "Backend Finca Valerio - Conectado correctamente",
+    estado: true,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// ========== RUTAS DE LA API ==========
+
+// Módulo Visitas
+app.use("/api/visita", require("./MODULOS/VISITA/routes"));
+
+// Módulo Bovinos
+app.use("/api/bovino", require("./MODULOS/BOVINO/routes"));
+
+// Módulo Grupos
+app.use("/api/grupo", require("./MODULOS/GRUPO/routes"));
+
+// Módulo Razas
+app.use("/api/raza", require("./MODULOS/RAZA/routes"));
+
+// Módulo Empleados
+app.use("/api/empleado", require("./MODULOS/EMPLEADO/routes"));
+
+// Módulo Vacunas
+app.use("/api/vacuna", require("./MODULOS/VACUNA/routes"));
+
+// Módulo Tratamientos
+app.use("/api/tratamiento", require("./MODULOS/TRATAMIENTO/routes"));
+
+// Módulo Enfermedades
+app.use("/api/enfermedad", require("./MODULOS/ENFERMEDAD/routes"));
+
+// Módulo Ciclo Celo
+app.use("/api/ciclo", require("./MODULOS/CELO/routes"));
+
+// Módulo Inseminación
+app.use("/api/inseminacion", require("./MODULOS/INSEMINACION/routes"));
+
+// Módulo Embarazo
+app.use("/api/embarazo", require("./MODULOS/EMBARAZO/routes"));
+
+// Módulo Parto
+app.use("/api/parto", require("./MODULOS/PARTO/routes"));
+
+// Módulo Ordeño
+app.use("/api/ordenio", require("./MODULOS/ORDENIO/routes"));
+
+// Módulo Producción
+app.use("/api/produccion", require("./MODULOS/PRODUCCION/routes"));
+
+// Módulo Insumos
+app.use("/api/insumo", require("./MODULOS/INSUMO/routes"));
+
+// Módulo Proveedores
+app.use("/api/proveedor", require("./MODULOS/PROVEEDOR/routes"));
+
+// Módulo Compras
+app.use("/api/compra", require("./MODULOS/COMPRA/routes"));
+
+// Módulo Ventas
+app.use("/api/venta", require("./MODULOS/VENTA/routes"));
+
+// Ruta 404 - No encontrado
+app.use((req, res) => {
+  res.status(404).json({
+    error: "Ruta no encontrada",
+    mensaje: `La ruta ${req.method} ${req.url} no existe`,
+    estado: false
+  });
+});
+
+// Puerto del servidor
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`🟢 Backend Finca Valerio en http://localhost:${PORT}`);
+  console.log(`📡 API disponible en http://localhost:${PORT}/api`);
+});
+
+module.exports = app;
