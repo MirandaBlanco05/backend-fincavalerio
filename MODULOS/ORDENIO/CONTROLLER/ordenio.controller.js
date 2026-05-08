@@ -109,7 +109,12 @@ exports.actualizar = async (req, res) => {
       return res.status(404).json({ error: "Ordeño no encontrado" });
     }
 
-    await ordenio.update(datos);
+    const cleanData = { ...datos };
+    const toInt = (val) => (val && val !== "") ? parseInt(val) : null;
+    if (cleanData.id_bovino !== undefined) cleanData.id_bovino = toInt(cleanData.id_bovino);
+    if (cleanData.id_empleado !== undefined) cleanData.id_empleado = toInt(cleanData.id_empleado);
+
+    await ordenio.update(cleanData);
 
     res.json({
       mensaje: "Ordeño actualizado correctamente",

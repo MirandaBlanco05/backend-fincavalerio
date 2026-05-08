@@ -94,7 +94,12 @@ exports.actualizar = async (req, res) => {
       }
     }
  
-    await parto.update(req.body);
+    const cleanData = { ...req.body };
+    const toInt = (val) => (val && val !== "") ? parseInt(val) : null;
+    if (cleanData.id_embarazo !== undefined) cleanData.id_embarazo = toInt(cleanData.id_embarazo);
+    if (cleanData.numero_crias !== undefined) cleanData.numero_crias = toInt(cleanData.numero_crias);
+
+    await parto.update(cleanData);
  
     res.json({ mensaje: "Parto actualizado correctamente", parto });
   } catch (error) {

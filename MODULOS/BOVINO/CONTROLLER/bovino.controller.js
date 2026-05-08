@@ -94,7 +94,15 @@ exports.actualizar = async (req, res) => {
       return res.status(404).json({ error: "Bovino no encontrado" });
     }
 
-    await bovino.update(datos);
+    const cleanData = { ...datos };
+    const toInt = (val) => (val && val !== "") ? parseInt(val) : null;
+    
+    if (cleanData.id_grupo !== undefined) cleanData.id_grupo = toInt(cleanData.id_grupo);
+    if (cleanData.id_raza !== undefined) cleanData.id_raza = toInt(cleanData.id_raza);
+    if (cleanData.numero_crotal !== undefined) cleanData.numero_crotal = toInt(cleanData.numero_crotal);
+    if (cleanData.edad !== undefined) cleanData.edad = toInt(cleanData.edad);
+
+    await bovino.update(cleanData);
 
     res.json({
       message: "Bovino actualizado correctamente",
