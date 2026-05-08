@@ -21,11 +21,11 @@ exports.crear = async (req, res) => {
     }
 
     const ordenio = await Ordenio.create({
-      id_bovino,
-      id_empleado,
-      fecha,
-      momento_dia,
-      cantidad_total
+      id_bovino: parseInt(id_bovino),
+      id_empleado: parseInt(id_empleado),
+      fecha: fecha || null,
+      momento_dia: momento_dia || null,
+      cantidad_total: cantidad_total ? String(cantidad_total) : null
     });
 
     res.status(201).json({

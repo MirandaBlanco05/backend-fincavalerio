@@ -18,29 +18,22 @@ exports.crear = async (req, res) => {
       peso
     } = req.body;
 
-    // Validaciones basicas obligatorias
-    if (
-      !id_grupo ||
-      !id_raza ||
-      !nombre ||
-      !fecha_nacimiento ||
-      !sexo ||
-      !estado
-    ) {
+    // Solo validamos lo estrictamente necesario para que la DB no explote
+    if (!id_grupo || !id_raza || !sexo || !estado) {
       return res.status(400).json({
-        error: "Faltan campos obligatorios para registrar el bovino"
+        error: "Faltan campos obligatorios (Grupo, Raza, Sexo o Estado)"
       });
     }
 
     const bovino = await Bovino.create({
-      id_grupo,
-      numero_crotal,
-      id_raza,
-      nombre,
-      fecha_nacimiento,
+      id_grupo: parseInt(id_grupo),
+      numero_crotal: numero_crotal ? parseInt(numero_crotal) : null,
+      id_raza: parseInt(id_raza),
+      nombre: nombre || 'Sin nombre',
+      fecha_nacimiento: fecha_nacimiento || null,
       nombre_madre,
       sexo,
-      edad,
+      edad: edad ? parseInt(edad) : null,
       estado,
       peso
     });

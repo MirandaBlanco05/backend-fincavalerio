@@ -14,9 +14,9 @@ exports.crear = async (req, res) => {
     }
  
     const embarazo = await Embarazo.create({
-      id_inseminacion,
-      id_veterinario,
-      fase,
+      id_inseminacion: parseInt(id_inseminacion),
+      id_veterinario: parseInt(id_veterinario),
+      fase: fase || null,
       fecha_secado: fecha_secado || null,
       fecha_prevista_parto
     });
@@ -41,15 +41,7 @@ exports.listar = async (req, res) => {
         {
           model: Inseminacion,
           as: "INSEMINACION",
-          include: [{
-            model: require("../../REPRODUCCION/MODEL/celo.model"),
-            as: "ciclo",
-            include: [{
-              model: require("../../BOVINO/MODEL/bovino.model"),
-              as: "bovino",
-              attributes: ["nombre"]
-            }]
-          }]
+          attributes: ["id_inseminacion", "fecha"]
         }
       ]
     });

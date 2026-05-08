@@ -21,10 +21,10 @@ exports.crear = async (req, res) => {
     }
  
     const parto = await Parto.create({
-      id_embarazo,
+      id_embarazo: parseInt(id_embarazo),
       fecha_parto,
-      numero_crias: numero_crias ?? null,
-      observaciones: observaciones ?? null
+      numero_crias: numero_crias ? parseInt(numero_crias) : null,
+      observaciones: observaciones || null
     });
  
     res.status(201).json({ mensaje: "Parto registrado correctamente", parto });
