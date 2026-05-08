@@ -1,5 +1,7 @@
 const Login = require("../MODEL/login.model");
+const bcrypt = require("bcrypt");
 
+// 🔐 LOGIN
 exports.login = async (req, res) => {
   try {
     const { usuario, contrasena } = req.body;
@@ -9,17 +11,23 @@ exports.login = async (req, res) => {
     }
 
     const encontrado = await Login.findOne({
-      where: {
-        usuario: usuario,
-        contrasena: contrasena
-      }
+      where: { usuario }
     });
 
     if (!encontrado) {
       return res.status(401).json({ error: "Credenciales incorrectas" });
     }
 
-    res.json({
+    const passwordValida = await bcrypt.compare(
+      contrasena,
+      encontrado.contrasena
+    );
+
+    if (!passwordValida) {
+      return res.status(401).json({ error: "Credenciales incorrectas" });
+    }
+
+    return res.json({
       mensaje: "Login correcto",
       usuario: encontrado.usuario,
       tipo: encontrado.tipo_usuario
@@ -27,6 +35,6 @@ exports.login = async (req, res) => {
 
   } catch (error) {
     console.error("ERROR LOGIN:", error);
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: "Error interno del servidor" });
   }
 };

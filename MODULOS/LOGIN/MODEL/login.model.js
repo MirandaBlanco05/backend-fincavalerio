@@ -12,7 +12,7 @@ const Login = sequelize.define("LOGIN", {
     allowNull: false
   },
   contrasena: {
-    type: DataTypes.STRING(20),
+    type: DataTypes.STRING(100),
     allowNull: false
   },
   tipo_usuario: {
