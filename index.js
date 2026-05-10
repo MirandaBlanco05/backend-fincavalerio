@@ -95,6 +95,7 @@ app.use("/api/enfermedad", require("./MODULOS/ENFERMEDAD/routes"));
 app.use("/api/historial", require("./MODULOS/HISTORIAL/routes"));
 app.use("/api/tratamiento", require("./MODULOS/TRATAMIENTO/routes"));
 app.use("/api/dosis", require("./MODULOS/DOSIS/routes"));
+
 // ---- Routers de los 6 dashboards ----
 app.use('/api/dashboard/ventas',       require('./MODULOS/DASHBOARD/routes.js'));
 app.use('/api/dashboard/compras',      require('./MODULOS/DASHBOARD/routes.js'));
@@ -102,6 +103,8 @@ app.use('/api/dashboard/reproduccion', require('./MODULOS/DASHBOARD/routes.js'))
 app.use('/api/dashboard/salud',        require('./MODULOS/DASHBOARD/routes.js'));
 app.use('/api/dashboard/animales',     require('./MODULOS/DASHBOARD/routes.js'));
 app.use('/api/dashboard/ordeno',       require('./MODULOS/DASHBOARD/routes.js'));
+
+app.use("/api/veterinario", require("./MODULOS/VETERINARIO/routes"));
 
 // ====================
 // Puerto servidor
