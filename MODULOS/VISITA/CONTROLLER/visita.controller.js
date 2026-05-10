@@ -167,5 +167,18 @@ exports.actualizar = async (req, res) => {
   }
 };
 
+/* LISTAR MOTIVOS */
+exports.listarMotivos = async (req, res) => {
+  try {
+    const motivos = await Motivo.findAll({
+      order: [["motivo", "ASC"]]
+    });
+    res.json(motivos);
+  } catch (error) {
+    console.error("ERROR LISTAR MOTIVOS:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 console.log("🚀 visita.controller cargado");
 

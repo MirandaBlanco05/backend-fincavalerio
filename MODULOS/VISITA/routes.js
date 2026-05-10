@@ -11,5 +11,6 @@ router.get("/:id", controller.obtenerPorId);
 router.delete("/eliminar/:id", controller.eliminar);
 
 router.put("/update/:id", controller.actualizar);
+router.get("/catalogos/motivos", controller.listarMotivos);
 
 module.exports = router;
