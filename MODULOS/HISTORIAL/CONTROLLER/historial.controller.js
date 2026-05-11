@@ -18,6 +18,25 @@ exports.listar = async (req, res) => {
   }
 };
 
+/* LISTAR POR BOVINO */
+exports.listarPorBovino = async (req, res) => {
+  try {
+    const { id_bovino } = req.params;
+    const historiales = await Historial.findAll({
+      where: { id_bovino },
+      include: [
+        { model: Bovino,      as: "bovino",       attributes: ["nombre", "numero_crotal"] },
+        { model: Enfermedad,  as: "enfermedades", attributes: ["nombre"],
+          through: { attributes: [] } }
+      ],
+      order: [["id_historial", "DESC"]]
+    });
+    res.json(historiales);
+  } catch (error) {
+    console.error("ERROR LISTAR HISTORIAL POR BOVINO:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
 /* OBTENER POR ID */
 exports.obtener = async (req, res) => {
   try {
