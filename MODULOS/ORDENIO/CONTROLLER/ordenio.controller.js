@@ -76,7 +76,8 @@ exports.obtenerPorId = async (req, res) => {
 
     const ordenio = await Ordenio.findByPk(id, {
       include: [
-        { model: Bovino, as: "BOVINO", attributes: ["nombre", "numero_crotal"] }
+        { model: Bovino, as: "BOVINO", attributes: ["nombre", "numero_crotal"] },
+        { model: Empleado, as: "EMPLEADO", attributes: ["nombre"] }
       ]
     });
 
