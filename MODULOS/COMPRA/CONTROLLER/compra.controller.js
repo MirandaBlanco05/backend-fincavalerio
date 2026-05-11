@@ -1,5 +1,7 @@
-const { CompraProveedor, Proveedor, SecuenciaNcf, ComprobanteFiscal, Provincia } = require("../MODEL");
+const { CompraProveedor, Proveedor, SecuenciaNcf, ComprobanteFiscal } = require("../MODEL");
+const { Provincia } = require("../../PROVEEDOR/MODEL");
 const { DetalleCompra } = require("../../DETALLECOMPRA/MODEL");
+const { Insumo } = require("../../INSUMO/MODEL");
 const { sequelize } = require("../../../CORE/DATABASE/sequelize");
 
 /* ══ CONSTRUIR NCF COMPLETO ══ */
@@ -28,7 +30,7 @@ exports.listar = async (req, res) => {
         },
         {
           model: DetalleCompra, as: "detalles",
-          include: ["insumo"]
+          include: [{ model: Insumo, as: "insumo" }]
         }
       ],
       order: [["id_compra", "DESC"]]
@@ -64,7 +66,7 @@ exports.obtener = async (req, res) => {
         },
         {
           model: DetalleCompra, as: "detalles",
-          include: ["insumo"]
+          include: [{ model: Insumo, as: "insumo" }]
         }
       ]
     });
