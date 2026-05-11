@@ -1,25 +1,36 @@
 const Ciclo = require("../MODEL/celo.model");
 const Bovino = require("../../BOVINO/MODEL/bovino.model");
 
-const toInt = (val) => (val !== undefined && val !== null && val !== "") ? parseInt(val) : null;
+const toInt = (val) => {
+  if (val === "" || val === null || val === undefined) return null;
+  const parsed = parseInt(String(val).replace(/\D/g, ''));
+  return isNaN(parsed) ? null : parsed;
+};
 
 // 🔹 Crear
 exports.crearCiclo = async (req, res) => {
   try {
     const { id_bovino, fecha_inicio, fecha_fin, duracion, observaciones } = req.body;
 
+    if (!id_bovino) return res.status(400).json({ error: "Debe seleccionar un animal" });
+    if (!fecha_inicio) return res.status(400).json({ error: "La fecha de inicio es obligatoria" });
+
     const nuevo = await Ciclo.create({
-      id_bovino: toInt(id_bovino),
-      fecha_inicio: fecha_inicio || null,
-      fecha_fin: fecha_fin || null,
-      duracion: toInt(duracion),
+      id_bovino:     toInt(id_bovino),
+      fecha_inicio:  fecha_inicio || null,
+      fecha_fin:     fecha_fin    || null,
+      duracion:      toInt(duracion),
       observaciones: observaciones?.trim() || null
     });
 
-    res.status(201).json(nuevo);
+    res.status(201).json({ mensaje: "Ciclo de celo registrado correctamente", ciclo: nuevo });
   } catch (error) {
     console.error("ERROR CREAR CICLO:", error);
-    res.status(500).json({ error: error.message });
+    let errorMsg = error.message;
+    if (error.name === 'SequelizeValidationError') {
+      errorMsg = error.errors.map(e => `${e.path}: ${e.message}`).join(', ');
+    }
+    res.status(500).json({ error: `Error de Base de Datos: ${errorMsg}` });
   }
 };
 
@@ -71,14 +82,14 @@ exports.actualizarCiclo = async (req, res) => {
 
     const ciclo = await Ciclo.findByPk(id);
     if (!ciclo) {
-      return res.status(404).json({ mensaje: "Ciclo no encontrado" });
+      return res.status(404).json({ error: "Ciclo no encontrado" });
     }
 
     await ciclo.update({
-      id_bovino:     id_bovino !== undefined ? toInt(id_bovino) : ciclo.id_bovino,
-      fecha_inicio:  fecha_inicio !== undefined ? (fecha_inicio || null) : ciclo.fecha_inicio,
-      fecha_fin:     fecha_fin !== undefined ? (fecha_fin || null) : ciclo.fecha_fin,
-      duracion:      duracion !== undefined ? toInt(duracion) : ciclo.duracion,
+      id_bovino:     id_bovino     !== undefined ? toInt(id_bovino) : ciclo.id_bovino,
+      fecha_inicio:  fecha_inicio  !== undefined ? (fecha_inicio || null) : ciclo.fecha_inicio,
+      fecha_fin:     fecha_fin     !== undefined ? (fecha_fin || null) : ciclo.fecha_fin,
+      duracion:      duracion      !== undefined ? toInt(duracion) : ciclo.duracion,
       observaciones: observaciones !== undefined ? (observaciones?.trim() || null) : ciclo.observaciones
     });
 
@@ -88,10 +99,14 @@ exports.actualizarCiclo = async (req, res) => {
       ]
     });
 
-    res.json(cicloActualizado);
+    res.json({ mensaje: "Ciclo actualizado correctamente", ciclo: cicloActualizado });
   } catch (error) {
     console.error("ERROR ACTUALIZAR CICLO:", error);
-    res.status(500).json({ error: error.message });
+    let errorMsg = error.message;
+    if (error.name === 'SequelizeValidationError') {
+      errorMsg = error.errors.map(e => `${e.path}: ${e.message}`).join(', ');
+    }
+    res.status(500).json({ error: `Error de Base de Datos: ${errorMsg}` });
   }
 };
 
