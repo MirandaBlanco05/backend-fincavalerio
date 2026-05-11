@@ -43,9 +43,8 @@ require("./MODULOS/DOSIS/MODEL");
 const iniciar = async () => {
   try {
     await conectarDB();
-    await sequelize.sync({ alter: true });
-
-    console.log("✅ Tablas sincronizadas");
+    // await sequelize.sync({ alter: true }); // Desactivado para evitar bloqueos
+    console.log("✅ Base de datos conectada (Sincronización manual)");
 
   } catch (error) {
     console.error("❌ Error:", error);
