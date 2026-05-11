@@ -1,59 +1,39 @@
 const { Bovino } = require("../MODEL");
 
-/* INSERTAR */
+// Helper para limpiar strings y números
+const cleanStr = (val, max) => val ? String(val).trim().substring(0, max) : null;
+const cleanInt = (val) => {
+  if (val === "" || val === null || val === undefined) return null;
+  const parsed = parseInt(String(val).replace(/\D/g, ''));
+  return isNaN(parsed) ? null : parsed;
+};
+
+/* CREAR */
 exports.crear = async (req, res) => {
   try {
     const { id_grupo, numero_crotal, id_raza, nombre, fecha_nacimiento, nombre_madre, sexo, edad, estado, peso } = req.body;
 
-    // 1. Limpieza y conversión de datos
-    const cleanInt = (val) => {
-      if (val === "" || val === null || val === undefined) return null;
-      const n = parseInt(String(val).replace(/\D/g, ''));
-      return isNaN(n) ? null : n;
-    };
-
-    const cleanStr = (val, limit) => {
-      if (!val) return null;
-      return String(val).trim().substring(0, limit);
-    };
-
-    // 2. Datos procesados
-    const datosFinales = {
+    const nuevoBovino = await Bovino.create({
       id_grupo:         cleanInt(id_grupo),
+      numero_crotal:    numero_crotal ? BigInt(numero_crotal) : null,
       id_raza:          cleanInt(id_raza),
-      numero_crotal:    cleanInt(numero_crotal),
-      nombre:           cleanStr(nombre, 30) || 'Sin nombre',
-      fecha_nacimiento: fecha_nacimiento || null,
+      nombre:           cleanStr(nombre, 30) || "Sin nombre",
+      fecha_nacimiento: fecha_nacimiento     || null,
       nombre_madre:     cleanStr(nombre_madre, 30),
-      sexo:             cleanStr(sexo, 6),
+      sexo:             sexo                 || "Macho",
       edad:             cleanInt(edad),
-      estado:           cleanStr(estado, 30),
+      estado:           cleanStr(estado, 30) || "Activo",
       peso:             cleanStr(peso, 10)
-    };
-
-    // 3. Validación de campos obligatorios
-    if (!datosFinales.id_grupo || !datosFinales.id_raza || !datosFinales.sexo || !datosFinales.estado) {
-      return res.status(400).json({ 
-        error: "Faltan campos obligatorios (Grupo, Raza, Sexo o Estado)",
-        recibido: datosFinales 
-      });
-    }
-
-    // 4. Intento de creación
-    const bovino = await Bovino.create(datosFinales);
-    res.status(201).json({ mensaje: "Bovino registrado correctamente", bovino });
-
-  } catch (error) {
-    console.error("ERROR CRÍTICO AL CREAR BOVINO:", error);
-    
-    let mensajeError = error.message;
-    if (error.name === 'SequelizeUniqueConstraintError') mensajeError = "El Número de Crotal ya existe.";
-    if (error.errors) mensajeError = error.errors.map(e => `${e.path}: ${e.message}`).join(", ");
-
-    res.status(500).json({ 
-      error: `Error de Base de Datos: ${mensajeError}`,
-      tipo: error.name
     });
+
+    res.status(201).json({ mensaje: "Animal registrado correctamente", bovino: nuevoBovino });
+  } catch (error) {
+    console.error("ERROR CREAR BOVINO:", error);
+    let errorMsg = error.message;
+    if (error.name === 'SequelizeValidationError') {
+      errorMsg = error.errors.map(e => `${e.path}: ${e.message}`).join(', ');
+    }
+    res.status(500).json({ error: `Error de Base de Datos: ${errorMsg}` });
   }
 };
 
@@ -70,24 +50,6 @@ exports.listar = async (req, res) => {
   }
 };
 
-/* ELIMINAR */
-exports.eliminar = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const bovino = await Bovino.findByPk(id);
-
-    if (!bovino) {
-      return res.status(404).json({ error: "Bovino no encontrado" });
-    }
-
-    await bovino.destroy();
-    res.json({ message: "Bovino eliminado correctamente" });
-  } catch (error) {
-    console.error("ERROR ELIMINAR BOVINO:", error);
-    res.status(500).json({ error: error.message });
-  }
-};
-
 /* ACTUALIZAR */
 exports.actualizar = async (req, res) => {
   try {
@@ -95,15 +57,41 @@ exports.actualizar = async (req, res) => {
     const { id_grupo, numero_crotal, id_raza, nombre, fecha_nacimiento, nombre_madre, sexo, edad, estado, peso } = req.body;
 
     const bovino = await Bovino.findByPk(id);
-      edad: edad !== undefined ? toInt(edad) : bovino.edad,
-      estado: estado !== undefined ? estado.trim().substring(0, 30) : bovino.estado,
-      peso: peso !== undefined ? (peso ? String(peso).substring(0, 10) : null) : bovino.peso
+    if (!bovino) {
+      return res.status(404).json({ error: `El animal con ID ${id} no existe en la base de datos.` });
+    }
+
+    await bovino.update({
+      id_grupo:         id_grupo !== undefined ? cleanInt(id_grupo) : bovino.id_grupo,
+      numero_crotal:    numero_crotal !== undefined ? (numero_crotal ? BigInt(numero_crotal) : null) : bovino.numero_crotal,
+      id_raza:          id_raza !== undefined ? cleanInt(id_raza) : bovino.id_raza,
+      nombre:           nombre !== undefined ? cleanStr(nombre, 30) : bovino.nombre,
+      fecha_nacimiento: fecha_nacimiento !== undefined ? (fecha_nacimiento || null) : bovino.fecha_nacimiento,
+      nombre_madre:     nombre_madre !== undefined ? cleanStr(nombre_madre, 30) : bovino.nombre_madre,
+      sexo:             sexo !== undefined ? sexo : bovino.sexo,
+      edad:             edad !== undefined ? cleanInt(edad) : bovino.edad,
+      estado:           estado !== undefined ? cleanStr(estado, 30) : bovino.estado,
+      peso:             peso !== undefined ? cleanStr(peso, 10) : bovino.peso
     });
 
-    res.json({ message: "Bovino actualizado correctamente", bovino });
+    res.json({ mensaje: "Animal actualizado correctamente", bovino });
   } catch (error) {
     console.error("ERROR ACTUALIZAR BOVINO:", error);
-    const msg = error.errors ? error.errors.map(e => e.message).join(", ") : error.message;
-    res.status(500).json({ error: msg });
+    res.status(500).json({ error: error.message });
+  }
+};
+
+/* ELIMINAR */
+exports.eliminar = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const bovino = await Bovino.findByPk(id);
+    if (!bovino) return res.status(404).json({ error: "Animal no encontrado" });
+
+    await bovino.destroy();
+    res.json({ mensaje: "Animal eliminado correctamente" });
+  } catch (error) {
+    console.error("ERROR ELIMINAR BOVINO:", error);
+    res.status(500).json({ error: error.message });
   }
 };
