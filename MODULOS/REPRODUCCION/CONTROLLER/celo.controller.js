@@ -8,6 +8,7 @@ const toInt = (val) => {
 
 // 🔹 Crear
 exports.crearCiclo = async (req, res) => {
+  console.log("📥 PETICION RECIBIDA - CREAR CICLO:", JSON.stringify(req.body, null, 2));
   try {
     const { id_bovino, fecha_inicio, fecha_fin, duracion, observaciones } = req.body;
 
@@ -76,8 +77,9 @@ exports.obtenerCicloPorId = async (req, res) => {
 
 // 🔹 Actualizar
 exports.actualizarCiclo = async (req, res) => {
+  const { id } = req.params;
+  console.log(`📥 PETICION RECIBIDA - ACTUALIZAR CICLO #${id}:`, JSON.stringify(req.body, null, 2));
   try {
-    const { id } = req.params;
     const { id_bovino, fecha_inicio, fecha_fin, duracion, observaciones } = req.body;
 
     const ciclo = await Ciclo.findByPk(id);
