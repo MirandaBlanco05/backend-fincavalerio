@@ -16,6 +16,17 @@ exports.crearCiclo = async (req, res) => {
     if (!fecha_inicio) return res.status(400).json({ error: "La fecha de inicio es obligatoria" });
     if (!fecha_fin) return res.status(400).json({ error: "La fecha de fin es obligatoria" });
 
+    // Validación de duración máxima (23 días)
+    const inicio = new Date(fecha_inicio);
+    const fin = new Date(fecha_fin);
+    const diffDias = Math.floor((fin - inicio) / (1000 * 60 * 60 * 24));
+    if (diffDias > 23) {
+      return res.status(400).json({ error: "El ciclo de celo no puede durar más de 23 días" });
+    }
+    if (diffDias < 0) {
+      return res.status(400).json({ error: "La fecha de fin no puede ser anterior a la de inicio" });
+    }
+
     const nuevo = await Ciclo.create({
       id_bovino:     toInt(id_bovino),
       fecha_inicio:  fecha_inicio,
@@ -84,6 +95,21 @@ exports.actualizarCiclo = async (req, res) => {
     const ciclo = await Ciclo.findByPk(id);
     if (!ciclo) {
       return res.status(404).json({ error: "Ciclo no encontrado" });
+    }
+
+    // Validación de duración máxima (23 días)
+    const fInicio = fecha_inicio || ciclo.fecha_inicio;
+    const fFin = fecha_fin || ciclo.fecha_fin;
+    if (fInicio && fFin) {
+      const inicio = new Date(fInicio);
+      const fin = new Date(fFin);
+      const diffDias = Math.floor((fin - inicio) / (1000 * 60 * 60 * 24));
+      if (diffDias > 23) {
+        return res.status(400).json({ error: "El ciclo de celo no puede durar más de 23 días" });
+      }
+      if (diffDias < 0) {
+        return res.status(400).json({ error: "La fecha de fin no puede ser anterior a la de inicio" });
+      }
     }
 
     await ciclo.update({

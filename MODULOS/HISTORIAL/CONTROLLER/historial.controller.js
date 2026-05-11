@@ -1,4 +1,4 @@
-const { Historial, Enfermedad, Bovino, HistorialEnfermedad } = require("../MODEL");
+const { Historial, HistorialEnfermedad, Enfermedad, Bovino } = require("../MODEL");
 
 /* LISTAR */
 exports.listar = async (req, res) => {
@@ -59,15 +59,9 @@ exports.obtener = async (req, res) => {
 /* CREAR */
 exports.crear = async (req, res) => {
   try {
-    let { id_bovino, enfermedades, id_enfermedad, fecha } = req.body;
+    const { id_bovino, enfermedades, fecha } = req.body;
 
     if (!id_bovino) return res.status(400).json({ error: "El bovino es obligatorio" });
-    
-    // Soporte para un solo ID o array
-    if (id_enfermedad && !enfermedades) {
-      enfermedades = [id_enfermedad];
-    }
-
     if (!enfermedades?.length) return res.status(400).json({ error: "Debe seleccionar al menos una enfermedad" });
 
     const historial = await Historial.create({ 
@@ -75,9 +69,9 @@ exports.crear = async (req, res) => {
       fecha: fecha || null
     });
 
-    const registros = enfermedades.map(enfId => ({
+    const registros = enfermedades.map(id_enfermedad => ({
       id_historial:  historial.id_historial,
-      id_enfermedad: parseInt(enfId)
+      id_enfermedad: parseInt(id_enfermedad)
     }));
     await HistorialEnfermedad.bulkCreate(registros);
 
@@ -92,7 +86,7 @@ exports.crear = async (req, res) => {
 exports.actualizar = async (req, res) => {
   try {
     const { id } = req.params;
-    let { id_bovino, enfermedades, id_enfermedad, fecha } = req.body;
+    const { id_bovino, enfermedades, fecha } = req.body;
 
     const historial = await Historial.findByPk(id);
     if (!historial) return res.status(404).json({ error: "Historial no encontrado" });
@@ -103,16 +97,11 @@ exports.actualizar = async (req, res) => {
     
     await historial.update(updateData);
 
-    // Soporte para un solo ID o array
-    if (id_enfermedad && !enfermedades) {
-      enfermedades = [id_enfermedad];
-    }
-
     if (enfermedades?.length) {
       await HistorialEnfermedad.destroy({ where: { id_historial: id } });
-      const registros = enfermedades.map(enfId => ({
+      const registros = enfermedades.map(id_enfermedad => ({
         id_historial:  parseInt(id),
-        id_enfermedad: parseInt(enfId)
+        id_enfermedad: parseInt(id_enfermedad)
       }));
       await HistorialEnfermedad.bulkCreate(registros);
     }
