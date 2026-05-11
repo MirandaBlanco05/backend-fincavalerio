@@ -50,6 +50,18 @@ exports.listar = async (req, res) => {
   }
 };
 
+/* OBTENER POR ID */
+exports.obtenerPorId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const bovino = await Bovino.findByPk(id);
+    if (!bovino) return res.status(404).json({ error: "Animal no encontrado" });
+    res.json(bovino);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 /* ACTUALIZAR */
 exports.actualizar = async (req, res) => {
   try {

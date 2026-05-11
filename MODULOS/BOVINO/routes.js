@@ -5,6 +5,7 @@ const bovinoController = require("./CONTROLLER/bovino.controller");
 
 router.post("/crear", bovinoController.crear);
 router.get("/listar", bovinoController.listar);
+router.get("/:id", bovinoController.obtenerPorId);
 router.delete("/eliminar/:id", bovinoController.eliminar);
 router.put("/actualizar/:id", bovinoController.actualizar);
 router.put("/update/:id", bovinoController.actualizar);
