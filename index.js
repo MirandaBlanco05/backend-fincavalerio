@@ -108,6 +108,8 @@ app.use('/api/dashboard/animales',     require('./MODULOS/DASHBOARD/routes.js'))
 app.use('/api/dashboard/ordeno',       require('./MODULOS/DASHBOARD/routes.js'));
 
 app.use("/api/veterinario", require("./MODULOS/VETERINARIO/routes"));
+app.use("/api/ordenio", require("./MODULOS/ORDENIO/routes"));
+app.use("/api/visita", require("./MODULOS/VISITA/routes"));
 
 // ====================
 // Puerto servidor
