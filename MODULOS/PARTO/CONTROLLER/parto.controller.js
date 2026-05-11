@@ -140,9 +140,12 @@ exports.actualizar = async (req, res) => {
     }
  
     const cleanData = { ...req.body };
-    const toInt = (val) => (val && val !== "") ? parseInt(val) : null;
+    const toInt = (val) => (val && val !== "" && val !== null) ? parseInt(val) : null;
+    const toFloat = (val) => (val && val !== "" && val !== null) ? parseFloat(val) : null;
+
     if (cleanData.id_embarazo !== undefined) cleanData.id_embarazo = toInt(cleanData.id_embarazo);
     if (cleanData.numero_crias !== undefined) cleanData.numero_crias = toInt(cleanData.numero_crias);
+    if (cleanData.peso_cria !== undefined) cleanData.peso_cria = toFloat(cleanData.peso_cria);
 
     await parto.update(cleanData);
  
