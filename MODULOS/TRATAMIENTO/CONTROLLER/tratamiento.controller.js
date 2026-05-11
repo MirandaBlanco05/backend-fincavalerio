@@ -34,6 +34,25 @@ exports.listar = async (req, res) => {
   }
 };
 
+/* ══ LISTAR POR ENFERMEDAD ══ */
+exports.listarPorEnfermedad = async (req, res) => {
+  try {
+    const { id_enfermedad } = req.params;
+    const tratamientos = await Tratamiento.findAll({
+      where: { id_enfermedad },
+      include: [
+        { model: Empleado,   as: "empleado",   attributes: ["nombre"] },
+        { model: Enfermedad, as: "enfermedad", attributes: ["nombre"] },
+        { model: Bovino,     as: "bovino",     attributes: ["nombre", "numero_crotal"] }
+      ],
+      order: [["fecha_inicio", "DESC"]]
+    });
+    res.json(tratamientos);
+  } catch (error) {
+    console.error("ERROR LISTAR TRATAMIENTO POR ENFERMEDAD:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
 /* ══ OBTENER POR ID ══ */
 exports.obtener = async (req, res) => {
   try {
