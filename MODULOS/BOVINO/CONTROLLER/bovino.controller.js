@@ -42,18 +42,11 @@ exports.crear = async (req, res) => {
 
     res.status(201).json({ mensaje: "Bovino registrado correctamente", bovino });
   } catch (error) {
-    console.error("ERROR AL CREAR BOVINO (FULL):", error);
-    
-    if (error.name === 'SequelizeUniqueConstraintError') {
-      return res.status(400).json({ error: "El Número de Crotal ya existe para otro animal." });
-    }
-    
-    if (error.name === 'SequelizeValidationError') {
-      const msg = error.errors.map(e => `${e.path}: ${e.message}`).join(", ");
-      return res.status(400).json({ error: `Error de validación: ${msg}` });
-    }
-
-    res.status(500).json({ error: error.message || "Error interno del servidor" });
+    console.error("ERROR AL CREAR BOVINO (DETALLADO):", error);
+    const detail = error.errors ? error.errors.map(e => `${e.path}: ${e.message}`).join(", ") : error.message;
+    res.status(500).json({ 
+      error: `Detalle del error [${error.name}]: ${detail}` 
+    });
   }
 };
 
