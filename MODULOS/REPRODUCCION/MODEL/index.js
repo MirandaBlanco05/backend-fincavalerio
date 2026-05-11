@@ -15,3 +15,5 @@ Bovino.hasMany(Ciclo, {
   as: "ciclos"
 });
 
+module.exports = { Ciclo, Bovino };
+

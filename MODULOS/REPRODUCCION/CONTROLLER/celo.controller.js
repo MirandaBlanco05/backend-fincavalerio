@@ -1,5 +1,4 @@
-const Ciclo = require("../MODEL/celo.model");
-const Bovino = require("../../BOVINO/MODEL/bovino.model");
+const { Ciclo, Bovino } = require("../MODEL");
 
 const toInt = (val) => {
   if (val === "" || val === null || val === undefined) return null;
@@ -14,11 +13,12 @@ exports.crearCiclo = async (req, res) => {
 
     if (!id_bovino) return res.status(400).json({ error: "Debe seleccionar un animal" });
     if (!fecha_inicio) return res.status(400).json({ error: "La fecha de inicio es obligatoria" });
+    if (!fecha_fin) return res.status(400).json({ error: "La fecha de fin es obligatoria" });
 
     const nuevo = await Ciclo.create({
       id_bovino:     toInt(id_bovino),
-      fecha_inicio:  fecha_inicio || null,
-      fecha_fin:     fecha_fin    || null,
+      fecha_inicio:  fecha_inicio,
+      fecha_fin:     fecha_fin,
       duracion:      toInt(duracion),
       observaciones: observaciones?.trim() || null
     });
