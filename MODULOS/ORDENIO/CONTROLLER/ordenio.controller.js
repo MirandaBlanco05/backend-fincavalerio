@@ -1,5 +1,5 @@
 // MODULOS/ORDENIO/CONTROLLER/ordenio.controller.js
-const { Ordenio, Bovino } = require("../MODEL");
+const { Ordenio, Bovino, Empleado } = require("../MODEL");
 
 /* ── CREAR ─────────────────────────────────────────────────────────────────── */
 exports.crear = async (req, res) => {
@@ -54,7 +54,7 @@ exports.listar = async (req, res) => {
         }
         
         {
-          model: require("../../EMPLEADO/MODEL/empleado.model"),
+          model: Empleado,
           as: "EMPLEADO",
           attributes: ["nombre"]
         }
