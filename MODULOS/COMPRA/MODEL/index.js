@@ -1,7 +1,6 @@
 const CompraProveedor   = require("./compra.model");
-const Proveedor         = require("../../PROVEEDOR/MODEL/proveedor.model");
-const SecuenciaNcf      = require("../../COMPROBANTE/MODEL/secuencia.model");
-const ComprobanteFiscal = require("../../COMPROBANTE/MODEL/comprobante.model");
+const { Proveedor }         = require("../../PROVEEDOR/MODEL");
+const { SecuenciaNcf, ComprobanteFiscal }      = require("../../COMPROBANTE/MODEL");
 
 Proveedor.hasMany(CompraProveedor,      { foreignKey: "id_proveedor", as: "compras" });
 CompraProveedor.belongsTo(Proveedor,    { foreignKey: "id_proveedor", as: "proveedor" });
