@@ -3,49 +3,56 @@ const { Bovino } = require("../MODEL");
 /* INSERTAR */
 exports.crear = async (req, res) => {
   try {
-    const {
-      id_grupo,
-      numero_crotal,
-      id_raza,
-      nombre,
-      fecha_nacimiento,
-      nombre_madre,
-      sexo,
-      edad,
-      estado,
-      peso
-    } = req.body;
+    const { id_grupo, numero_crotal, id_raza, nombre, fecha_nacimiento, nombre_madre, sexo, edad, estado, peso } = req.body;
 
-    // Solo validamos lo estrictamente necesario
-    if (!id_grupo || !id_raza || !sexo || !estado) {
-      return res.status(400).json({ error: "Faltan campos obligatorios" });
-    }
-
-    const toInt = (val) => {
+    // 1. Limpieza y conversión de datos
+    const cleanInt = (val) => {
       if (val === "" || val === null || val === undefined) return null;
-      const parsed = parseInt(String(val).replace(/\D/g, '')); // Solo números
-      return isNaN(parsed) ? null : parsed;
+      const n = parseInt(String(val).replace(/\D/g, ''));
+      return isNaN(n) ? null : n;
     };
 
-    const bovino = await Bovino.create({
-      id_grupo: toInt(id_grupo),
-      numero_crotal: toInt(numero_crotal),
-      id_raza: toInt(id_raza),
-      nombre: nombre ? nombre.trim().substring(0, 30) : 'Sin nombre',
-      fecha_nacimiento: fecha_nacimiento || null,
-      nombre_madre: nombre_madre ? nombre_madre.trim().substring(0, 30) : null,
-      sexo: sexo.trim().substring(0, 6),
-      edad: toInt(edad),
-      estado: estado.trim().substring(0, 30),
-      peso: peso ? String(peso).substring(0, 10) : null
-    });
+    const cleanStr = (val, limit) => {
+      if (!val) return null;
+      return String(val).trim().substring(0, limit);
+    };
 
+    // 2. Datos procesados
+    const datosFinales = {
+      id_grupo:         cleanInt(id_grupo),
+      id_raza:          cleanInt(id_raza),
+      numero_crotal:    cleanInt(numero_crotal),
+      nombre:           cleanStr(nombre, 30) || 'Sin nombre',
+      fecha_nacimiento: fecha_nacimiento || null,
+      nombre_madre:     cleanStr(nombre_madre, 30),
+      sexo:             cleanStr(sexo, 6),
+      edad:             cleanInt(edad),
+      estado:           cleanStr(estado, 30),
+      peso:             cleanStr(peso, 10)
+    };
+
+    // 3. Validación de campos obligatorios
+    if (!datosFinales.id_grupo || !datosFinales.id_raza || !datosFinales.sexo || !datosFinales.estado) {
+      return res.status(400).json({ 
+        error: "Faltan campos obligatorios (Grupo, Raza, Sexo o Estado)",
+        recibido: datosFinales 
+      });
+    }
+
+    // 4. Intento de creación
+    const bovino = await Bovino.create(datosFinales);
     res.status(201).json({ mensaje: "Bovino registrado correctamente", bovino });
+
   } catch (error) {
-    console.error("ERROR AL CREAR BOVINO (DETALLADO):", error);
-    const detail = error.errors ? error.errors.map(e => `${e.path}: ${e.message}`).join(", ") : error.message;
+    console.error("ERROR CRÍTICO AL CREAR BOVINO:", error);
+    
+    let mensajeError = error.message;
+    if (error.name === 'SequelizeUniqueConstraintError') mensajeError = "El Número de Crotal ya existe.";
+    if (error.errors) mensajeError = error.errors.map(e => `${e.path}: ${e.message}`).join(", ");
+
     res.status(500).json({ 
-      error: `[SEÑAL DE VIDA] Detalle: ${detail}` 
+      error: `Error de Base de Datos: ${mensajeError}`,
+      tipo: error.name
     });
   }
 };
