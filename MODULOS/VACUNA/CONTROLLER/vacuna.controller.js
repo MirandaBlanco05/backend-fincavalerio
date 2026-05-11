@@ -4,14 +4,36 @@ const { sequelize } = require("../../../CORE/DATABASE/sequelize");
 // Listar todas las vacunas con sus detalles
 exports.listar = async (req, res) => {
   try {
+    const { Vacuna, DetalleVacuna, Insumo, Bovino, Empleado } = require("../MODEL");
     const vacunas = await Vacuna.findAll({
-      include: [{
-        model: DetalleVacuna,
-        as: 'detalles'
-      }],
+      include: [
+        { model: Insumo, as: 'insumo', attributes: ['nombre_insumo'] },
+        {
+          model: DetalleVacuna,
+          as: 'detalles',
+          include: [
+            { model: Bovino, as: 'bovino', attributes: ['nombre'] },
+            { model: Empleado, as: 'empleado', attributes: ['nombre'] }
+          ]
+        }
+      ],
       order: [["fecha", "DESC"]]
     });
-    res.json(vacunas);
+
+    const resultado = vacunas.map(v => {
+      const detalle = v.detalles?.[0]; 
+      return {
+        id_vacuna: v.id_vacuna,
+        tipo_vacuna: v.tipo_vacuna,
+        fecha: v.fecha,
+        insumo_nombre: v.insumo?.nombre_insumo || '—',
+        bovino_nombre: detalle?.bovino?.nombre || '—',
+        empleado_nombre: detalle?.empleado?.nombre || '—',
+        id_bovino: detalle?.id_bovino,
+        id_insumo: v.id_insumo
+      };
+    });
+    res.json(resultado);
   } catch (error) {
     console.error("Error al listar vacunas:", error);
     res.status(500).json({ error: "Error al listar vacunas" });
