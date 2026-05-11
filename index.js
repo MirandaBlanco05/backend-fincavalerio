@@ -2,6 +2,9 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+// Soporte para serializar BigInt en JSON (necesario para numero_crotal)
+BigInt.prototype.toJSON = function() { return this.toString() }
+
 const { conectarDB, sequelize } = require("./CORE/DATABASE/sequelize"); 
 const app = express();
 
