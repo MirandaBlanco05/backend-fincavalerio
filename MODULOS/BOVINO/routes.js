@@ -7,6 +7,7 @@ router.post("/crear", bovinoController.crear);
 router.get("/listar", bovinoController.listar);
 router.delete("/eliminar/:id", bovinoController.eliminar);
 router.put("/actualizar/:id", bovinoController.actualizar);
+router.put("/update/:id", bovinoController.actualizar);
 
 
 
