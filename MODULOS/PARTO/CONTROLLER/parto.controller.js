@@ -1,5 +1,5 @@
 // MODULOS/PARTO/CONTROLLER/parto.controller.js
-const { Parto, Embarazo, Bovino } = require("../MODEL");
+const { Parto, Embarazo, Bovino, Inseminacion, Ciclo } = require("../MODEL");
  
 /* ── CREAR ─────────────────────────────────────────────── */
 exports.crear = async (req, res) => {
@@ -52,25 +52,41 @@ exports.listar = async (req, res) => {
           model: Embarazo,
           as: "EMBARAZO",
           include: [
-            { model: Bovino, as: "bovino", attributes: ["nombre", "numero_crotal"] }
+            {
+              model: Inseminacion,
+              as: "INSEMINACION",
+              include: [
+                {
+                  model: Ciclo,
+                  as: "ciclo",
+                  include: [
+                    { model: Bovino, as: "bovino", attributes: ["id_bovino", "nombre", "numero_crotal"] }
+                  ]
+                }
+              ]
+            }
           ]
         }
       ],
       order: [["fecha_parto", "DESC"]]
     });
 
-    const resultado = partos.map(p => ({
-      id_parto:     p.id_parto,
-      id_embarazo:  p.id_embarazo,
-      fecha_parto:  p.fecha_parto,
-      numero_crias: p.numero_crias,
-      tipo_parto:   p.tipo_parto,
-      sexo_cria:    p.sexo_cria,
-      peso_cria:    p.peso_cria,
-      estado_cria:  p.estado_cria,
-      observaciones: p.observaciones,
-      bovino:       p.EMBARAZO?.bovino || null
-    }));
+    const resultado = partos.map(p => {
+      const bovino = p.EMBARAZO?.INSEMINACION?.ciclo?.bovino || null;
+      return {
+        id_parto:     p.id_parto,
+        id_embarazo:  p.id_embarazo,
+        fecha_parto:  p.fecha_parto,
+        numero_crias: p.numero_crias,
+        tipo_parto:   p.tipo_parto,
+        sexo_cria:    p.sexo_cria,
+        peso_cria:    p.peso_cria,
+        estado_cria:  p.estado_cria,
+        observaciones: p.observaciones,
+        bovino:       bovino,
+        id_bovino:    bovino?.id_bovino || null
+      };
+    });
 
     res.json(resultado);
   } catch (error) {
