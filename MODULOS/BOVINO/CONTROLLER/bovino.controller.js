@@ -60,8 +60,10 @@ exports.crear = async (req, res) => {
 /* LISTAR */
 exports.listar = async (req, res) => {
   try {
-    // PRUEBA DE CONEXIÓN: Devolvemos datos fijos para ver si carga
-    res.json([{ id_bovino: 1, nombre: "Animal de Prueba", numero_crotal: 123 }]);
+    const bovinos = await Bovino.findAll({
+      order: [["id_bovino", "DESC"]]
+    });
+    res.json(bovinos);
   } catch (error) {
     console.error("ERROR LISTAR BOVINOS:", error);
     res.status(500).json({ error: error.message });
