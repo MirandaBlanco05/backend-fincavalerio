@@ -23,6 +23,11 @@ const Venta = sequelize.define("VENTA", {
     type: DataTypes.INTEGER,
     allowNull: false
   },
+  metodo_pago: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
+    defaultValue: "Efectivo"
+  },
   estado: {
     type: DataTypes.STRING(20),
     allowNull: false,
