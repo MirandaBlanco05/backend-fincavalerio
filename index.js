@@ -37,6 +37,7 @@ require("./MODULOS/ENFERMEDAD/MODEL");
 require("./MODULOS/HISTORIAL/MODEL");
 require("./MODULOS/TRATAMIENTO/MODEL");
 require("./MODULOS/DOSIS/MODEL");
+require("./MODULOS/VACUNA/MODEL");
 
 
 // ====================
