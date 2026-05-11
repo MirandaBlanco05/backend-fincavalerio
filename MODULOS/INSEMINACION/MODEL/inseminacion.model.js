@@ -26,7 +26,7 @@ const Inseminacion = sequelize.define("INSEMINACION", {
     type: DataTypes.STRING(30),
     allowNull: false,
     validate: {
-      isIn: [['Inefectiva', 'Efectiva']]
+      isIn: [['Inefectiva', 'Efectiva', 'Pendiente']]
     }
   },
   fecha: {
