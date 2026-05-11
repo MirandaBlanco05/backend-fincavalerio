@@ -53,11 +53,11 @@ exports.listar = async (req, res) => {
           attributes: ["nombre", "numero_crotal"]
         }
         
-       // {
-       // model: Empleado,
-        //as: "EMPLEADO",
-          //attributes: ["nombre"]
-        //}
+        {
+          model: require("../../EMPLEADO/MODEL/empleado.model"),
+          as: "EMPLEADO",
+          attributes: ["nombre"]
+        }
       ],
       order: [["fecha", "DESC"]]
     });
