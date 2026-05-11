@@ -2,15 +2,17 @@ const express = require("express"); // Redeploy: 2026-05-11 14:39
 const cors = require("cors");
 require("dotenv").config();
 
-// Soporte para serializar BigInt en JSON (necesario para numero_crotal)
-BigInt.prototype.toJSON = function() { return this.toString() }
-
-const { conectarDB, sequelize } = require("./CORE/DATABASE/sequelize"); 
 const app = express();
 
-// Middlewares
+// Aumentar límites para evitar errores de payload
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+// Configuración de CORS
 app.use(cors());
-app.use(express.json());
+
+// Manejo de BigInt para JSON
+BigInt.prototype.toJSON = function() { return this.toString() }
 
 // ====================
 // Cargar modelos
@@ -44,6 +46,7 @@ require("./MODULOS/VACUNA/MODEL");
 // ====================
 // Conexion DB
 // ====================
+const { conectarDB } = require("./CORE/DATABASE/sequelize");
 
 const iniciar = async () => {
   try {
@@ -56,45 +59,40 @@ const iniciar = async () => {
   }
 };
 
-iniciar();
+// iniciar(); // Movido
+
 
 // ====================
 // Ruta test
 // ====================
 app.get("/api/test", (req, res) => {
-  res.json({
-    mensaje: "Backend conectado correctamente",
-    estado: true
-  });
+  res.json({ mensaje: "API Funcionando correctamente", status: "OK" });
 });
 
+
 // ====================
-// Rutas API
+// Montar Rutas
 // ====================
-app.use("/api/visita", require("./MODULOS/VISITA/routes"));
-app.use("/api/veterinario", require("./MODULOS/VISITA/veterinario.routes"));
+app.use("/api/login", require("./MODULOS/LOGIN/routes"));
+app.use("/api/bovino", require("./MODULOS/BOVINO/routes"));
 app.use("/api/grupo", require("./MODULOS/BOVINO/grupo.routes"));
 app.use("/api/raza", require("./MODULOS/BOVINO/raza.routes"));
-app.use("/api/bovino", require("./MODULOS/BOVINO/routes"));
-app.use("/api/login", require("./MODULOS/LOGIN/routes"));
-app.use("/api/ciclo", require("./MODULOS/REPRODUCCION/routes"));
 app.use("/api/inseminacion", require("./MODULOS/INSEMINACION/routes"));
 app.use("/api/embarazo", require("./MODULOS/EMBARAZO/routes"));
+app.use("/api/ciclo", require("./MODULOS/REPRODUCCION/routes"));
 app.use("/api/parto", require("./MODULOS/PARTO/routes"));
 app.use("/api/empleado", require("./MODULOS/EMPLEADO/routes"));
-app.use("/api/ordenio", require("./MODULOS/ORDENIO/routes"));
 app.use("/api/producto", require("./MODULOS/PRODUCTO/routes"));
-app.use("/api/pais", require("./MODULOS/DIRECCION/PAIS/routes"));
 app.use("/api/provincia", require("./MODULOS/DIRECCION/PROVINCIA/routes"));
 app.use("/api/cliente", require("./MODULOS/CLIENTE/routes"));
-app.use("/api/ncf", require("./MODULOS/COMPROBANTE/routes"));
+app.use("/api/comprobante", require("./MODULOS/COMPROBANTE/routes"));
 app.use("/api/venta", require("./MODULOS/VENTA/routes"));
-app.use("/api/metodo-pago", require("./MODULOS/METODOPAGO/routes"));
-app.use("/api/detalleVenta", require("./MODULOS/DETALLEVENTA/routes.js"));
+app.use("/api/metodopago", require("./MODULOS/METODOPAGO/routes"));
+app.use("/api/detalleventa", require("./MODULOS/DETALLEVENTA/routes"));
 app.use("/api/proveedor", require("./MODULOS/PROVEEDOR/routes"));
 app.use("/api/insumo", require("./MODULOS/INSUMO/routes"));
 app.use("/api/compra", require("./MODULOS/COMPRA/routes"));
-app.use("/api/detalleCompra", require("./MODULOS/DETALLECOMPRA/routes"));
+app.use("/api/detallecompra", require("./MODULOS/DETALLECOMPRA/routes"));
 app.use("/api/enfermedad", require("./MODULOS/ENFERMEDAD/routes"));
 app.use("/api/historial", require("./MODULOS/HISTORIAL/routes"));
 app.use("/api/tratamiento", require("./MODULOS/TRATAMIENTO/routes"));
@@ -117,6 +115,11 @@ app.use("/api/veterinario", require("./MODULOS/VETERINARIO/routes"));
 
 const PORT = process.env.PORT || 3000;
 
+app.get("/api/ping", (req, res) => res.json({ status: "ok" }));
+
 app.listen(PORT, () => {
-  console.log(`🟢 Backend en http://localhost:${PORT}`);
+  console.log("🟢 Backend escuchando puerto " + PORT);
+  iniciar();
 });
+
+module.exports = app;
