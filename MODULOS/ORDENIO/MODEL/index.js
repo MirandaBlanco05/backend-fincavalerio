@@ -7,6 +7,6 @@ const Empleado = require("../../EMPLEADO/MODEL/empleado.model");
 Bovino.hasMany(Ordenio,  { foreignKey: "id_bovino",  as: "ORDENIOS_BOVINO" });
 Ordenio.belongsTo(Bovino, { foreignKey: "id_bovino",  as: "bovino"  });
 Empleado.hasMany(Ordenio,   { foreignKey: "id_empleado", as: "ORDENIOS_EMPLEADO"  });
-Ordenio.belongsTo(Empleado, { foreignKey: "id_empleado", as: "empleado" });
+Ordenio.belongsTo(Empleado, { foreignKey: "id_empleado", as: "encargado" });
 
 module.exports = { Ordenio, Bovino,Empleado };
