@@ -37,36 +37,19 @@ exports.obtener = async (req, res) => {
   }
 };
 
-/* LISTAR POR BOVINO */
-exports.listarPorBovino = async (req, res) => {
-  try {
-    const { id_bovino } = req.params;
-    const historiales = await Historial.findAll({
-      where: { id_bovino },
-      include: [
-        { model: Enfermedad, as: "enfermedades", attributes: [ "nombre"],
-          through: { attributes: [] } }
-      ],
-      order: [["id_historial", "DESC"]]
-    });
-    res.json(historiales);
-  } catch (error) {
-    console.error("ERROR LISTAR HISTORIAL POR BOVINO:", error);
-    res.status(500).json({ error: error.message });
-  }
-};
-
-/* CREAR — crea historial y asocia enfermedades */
+/* CREAR */
 exports.crear = async (req, res) => {
   try {
-    const { id_bovino, enfermedades } = req.body;
+    const { id_bovino, enfermedades, fecha } = req.body;
 
     if (!id_bovino) return res.status(400).json({ error: "El bovino es obligatorio" });
     if (!enfermedades?.length) return res.status(400).json({ error: "Debe seleccionar al menos una enfermedad" });
 
-    const historial = await Historial.create({ id_bovino });
+    const historial = await Historial.create({ 
+      id_bovino,
+      fecha: fecha || null
+    });
 
-    // Insertar enfermedades en la tabla intermedia
     const registros = enfermedades.map(id_enfermedad => ({
       id_historial:  historial.id_historial,
       id_enfermedad: parseInt(id_enfermedad)
@@ -80,19 +63,22 @@ exports.crear = async (req, res) => {
   }
 };
 
-/* ACTUALIZAR enfermedades del historial */
+/* ACTUALIZAR */
 exports.actualizar = async (req, res) => {
   try {
     const { id } = req.params;
-    const { id_bovino, enfermedades } = req.body;
+    const { id_bovino, enfermedades, fecha } = req.body;
 
     const historial = await Historial.findByPk(id);
     if (!historial) return res.status(404).json({ error: "Historial no encontrado" });
 
-    if (id_bovino) await historial.update({ id_bovino });
+    const updateData = {};
+    if (id_bovino) updateData.id_bovino = id_bovino;
+    if (fecha !== undefined) updateData.fecha = fecha;
+    
+    await historial.update(updateData);
 
     if (enfermedades?.length) {
-      // Eliminar enfermedades anteriores y reinsertar
       await HistorialEnfermedad.destroy({ where: { id_historial: id } });
       const registros = enfermedades.map(id_enfermedad => ({
         id_historial:  parseInt(id),
@@ -115,7 +101,6 @@ exports.eliminar = async (req, res) => {
     const historial = await Historial.findByPk(id);
     if (!historial) return res.status(404).json({ error: "Historial no encontrado" });
 
-    // Eliminar enfermedades asociadas primero
     await HistorialEnfermedad.destroy({ where: { id_historial: id } });
     await historial.destroy();
 

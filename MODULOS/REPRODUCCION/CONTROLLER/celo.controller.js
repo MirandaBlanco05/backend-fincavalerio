@@ -1,13 +1,24 @@
 const Ciclo = require("../MODEL/celo.model");
 const Bovino = require("../../BOVINO/MODEL/bovino.model");
 
+const toInt = (val) => (val !== undefined && val !== null && val !== "") ? parseInt(val) : null;
 
 // 🔹 Crear
 exports.crearCiclo = async (req, res) => {
   try {
-    const nuevo = await Ciclo.create(req.body);
+    const { id_bovino, fecha_inicio, fecha_fin, duracion, observaciones } = req.body;
+
+    const nuevo = await Ciclo.create({
+      id_bovino: toInt(id_bovino),
+      fecha_inicio: fecha_inicio || null,
+      fecha_fin: fecha_fin || null,
+      duracion: toInt(duracion),
+      observaciones: observaciones?.trim() || null
+    });
+
     res.status(201).json(nuevo);
   } catch (error) {
+    console.error("ERROR CREAR CICLO:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -21,26 +32,24 @@ exports.obtenerCiclos = async (req, res) => {
         {
           model: Bovino,
           as: "bovino", 
-          attributes: ["id_bovino", "nombre"]
+          attributes: ["id_bovino", "nombre", "numero_crotal"]
         }
-      ]
+      ],
+      order: [["fecha_inicio", "DESC"]]
     });
 
     res.json(lista);
-
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
-
-
 
 // 🔹 Obtener por ID
 exports.obtenerCicloPorId = async (req, res) => {
   try {
     const ciclo = await Ciclo.findByPk(req.params.id, {
       include: [
-        { model: Bovino }
+        { model: Bovino, as: "bovino" }
       ]
     });
 
@@ -49,38 +58,29 @@ exports.obtenerCicloPorId = async (req, res) => {
     }
 
     res.json(ciclo);
-
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-
-// 🔹 Actualizar (VERSIÓN SEGURA)
+// 🔹 Actualizar
 exports.actualizarCiclo = async (req, res) => {
   try {
     const { id } = req.params;
+    const { id_bovino, fecha_inicio, fecha_fin, duracion, observaciones } = req.body;
 
-    const camposPermitidos = {};
-
-    if (req.body.id_bovino !== undefined) camposPermitidos.id_bovino = req.body.id_bovino;
-    if (req.body.fecha_inicio !== undefined) camposPermitidos.fecha_inicio = req.body.fecha_inicio;
-    if (req.body.fecha_fin !== undefined) camposPermitidos.fecha_fin = req.body.fecha_fin;
-    if (req.body.duracion !== undefined) camposPermitidos.duracion = req.body.duracion;
-    if (req.body.observaciones !== undefined) camposPermitidos.observaciones = req.body.observaciones;
-
-    // Verificar que se envió al menos un campo
-    if (Object.keys(camposPermitidos).length === 0) {
-      return res.status(400).json({ mensaje: "No se enviaron campos para actualizar" });
-    }
-
-    const [actualizado] = await Ciclo.update(camposPermitidos, {
-      where: { id_ciclo: id }
-    });
-
-    if (!actualizado) {
+    const ciclo = await Ciclo.findByPk(id);
+    if (!ciclo) {
       return res.status(404).json({ mensaje: "Ciclo no encontrado" });
     }
+
+    await ciclo.update({
+      id_bovino:     id_bovino !== undefined ? toInt(id_bovino) : ciclo.id_bovino,
+      fecha_inicio:  fecha_inicio !== undefined ? (fecha_inicio || null) : ciclo.fecha_inicio,
+      fecha_fin:     fecha_fin !== undefined ? (fecha_fin || null) : ciclo.fecha_fin,
+      duracion:      duracion !== undefined ? toInt(duracion) : ciclo.duracion,
+      observaciones: observaciones !== undefined ? (observaciones?.trim() || null) : ciclo.observaciones
+    });
 
     const cicloActualizado = await Ciclo.findByPk(id, {
       include: [
@@ -89,12 +89,11 @@ exports.actualizarCiclo = async (req, res) => {
     });
 
     res.json(cicloActualizado);
-
   } catch (error) {
+    console.error("ERROR ACTUALIZAR CICLO:", error);
     res.status(500).json({ error: error.message });
   }
 };
-
 
 // 🔹 Eliminar
 exports.eliminarCiclo = async (req, res) => {
@@ -108,7 +107,6 @@ exports.eliminarCiclo = async (req, res) => {
     }
 
     res.json({ mensaje: "Ciclo eliminado correctamente" });
-
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -3,24 +3,26 @@ const Ciclo = require("../../REPRODUCCION/MODEL/celo.model");
 const Veterinario = require("../../VISITA/MODEL/veterinario.model");
 const Bovino = require("../../BOVINO/MODEL/bovino.model");
 
+const toInt = (val) => (val !== undefined && val !== null && val !== "") ? parseInt(val) : null;
 
 // 🔹 Crear
 exports.crearInseminacion = async (req, res) => {
   try {
-    const { id_veterinario, id_ciclo } = req.body;
-    const toInt = (val) => (val && val !== "") ? parseInt(val) : null;
+    const { id_veterinario, id_ciclo, tipo_inseminacion, resultado, fecha } = req.body;
 
     const nueva = await Inseminacion.create({
-      ...req.body,
       id_veterinario: toInt(id_veterinario),
-      id_ciclo: toInt(id_ciclo)
+      id_ciclo: toInt(id_ciclo),
+      tipo_inseminacion: tipo_inseminacion?.trim() || null,
+      resultado: resultado?.trim() || null,
+      fecha: fecha || null
     });
     res.status(201).json(nueva);
   } catch (error) {
+    console.error("ERROR CREAR INSEMINACION:", error);
     res.status(500).json({ error: error.message });
   }
 };
-
 
 exports.obtenerInseminaciones = async (req, res) => {
   try {
@@ -44,7 +46,8 @@ exports.obtenerInseminaciones = async (req, res) => {
           as: "veterinario",
           attributes: [ "nombre"]
         }
-      ]
+      ],
+      order: [["fecha", "DESC"]]
     });
 
     res.json(lista);
@@ -53,20 +56,13 @@ exports.obtenerInseminaciones = async (req, res) => {
   }
 };
 
-
 // 🔹 Obtener por ID
 exports.obtenerInseminacionPorId = async (req, res) => {
   try {
     const inseminacion = await Inseminacion.findByPk(req.params.id, {
       include: [
-        { 
-          model: Ciclo,
-          as: "ciclo"
-        },
-        { 
-          model: Veterinario,
-          as: "veterinario"
-        }
+        { model: Ciclo, as: "ciclo" },
+        { model: Veterinario, as: "veterinario" }
       ]
     });
 
@@ -75,33 +71,29 @@ exports.obtenerInseminacionPorId = async (req, res) => {
     }
 
     res.json(inseminacion);
-
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-
 // 🔹 Actualizar
 exports.actualizarInseminacion = async (req, res) => {
   try {
     const { id } = req.params;
+    const { id_veterinario, id_ciclo, tipo_inseminacion, resultado, fecha } = req.body;
 
-    const camposPermitidos = {
-      id_veterinario: req.body.id_veterinario,
-      id_ciclo: req.body.id_ciclo,
-      tipo_inseminacion: req.body.tipo_inseminacion,
-      resultado: req.body.resultado,
-      fecha: req.body.fecha
-    };
-
-    const [actualizado] = await Inseminacion.update(camposPermitidos, {
-      where: { id_inseminacion: id }
-    });
-
-    if (!actualizado) {
+    const inseminacion = await Inseminacion.findByPk(id);
+    if (!inseminacion) {
       return res.status(404).json({ mensaje: "Inseminación no encontrada" });
     }
+
+    await inseminacion.update({
+      id_veterinario:    id_veterinario !== undefined ? toInt(id_veterinario) : inseminacion.id_veterinario,
+      id_ciclo:          id_ciclo !== undefined ? toInt(id_ciclo) : inseminacion.id_ciclo,
+      tipo_inseminacion: tipo_inseminacion !== undefined ? (tipo_inseminacion?.trim() || null) : inseminacion.tipo_inseminacion,
+      resultado:         resultado !== undefined ? (resultado?.trim() || null) : inseminacion.resultado,
+      fecha:             fecha !== undefined ? (fecha || null) : inseminacion.fecha
+    });
 
     const inseminacionActualizada = await Inseminacion.findByPk(id, {
       include: [
@@ -111,12 +103,11 @@ exports.actualizarInseminacion = async (req, res) => {
     });
 
     res.json(inseminacionActualizada);
-
   } catch (error) {
+    console.error("ERROR ACTUALIZAR INSEMINACION:", error);
     res.status(500).json({ error: error.message });
   }
 };
-
 
 // 🔹 Eliminar
 exports.eliminarInseminacion = async (req, res) => {
@@ -130,7 +121,6 @@ exports.eliminarInseminacion = async (req, res) => {
     }
 
     res.json({ mensaje: "Inseminación eliminada correctamente" });
-
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

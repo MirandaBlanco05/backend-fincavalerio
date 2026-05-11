@@ -12,7 +12,7 @@ const Bovino = sequelize.define("BOVINO", {
     allowNull: false
   },
   numero_crotal: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     allowNull: true
   },
   id_raza: {

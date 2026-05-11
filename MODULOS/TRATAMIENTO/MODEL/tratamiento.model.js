@@ -7,6 +7,10 @@ const Tratamiento = sequelize.define("TRATAMIENTO", {
     primaryKey: true,
     autoIncrement: true
   },
+  id_bovino: {
+    type: DataTypes.INTEGER,
+    allowNull: true // Permitimos null por compatibilidad con registros viejos si los hay
+  },
   id_enfermedad: {
     type: DataTypes.INTEGER,
     allowNull: false

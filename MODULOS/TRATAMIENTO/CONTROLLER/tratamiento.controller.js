@@ -1,48 +1,30 @@
-const { Tratamiento, Enfermedad, Empleado } = require("../MODEL");
-const Historial           = require("../../HISTORIAL/MODEL/historial.model");
-const HistorialEnfermedad = require("../../HISTORIAL/MODEL/historialenfermedad.model");
-const Bovino              = require("../../BOVINO/MODEL/bovino.model");
+const { Tratamiento, Enfermedad, Empleado, Bovino } = require("../MODEL");
 
 /* ══ LISTAR ══ */
 exports.listar = async (req, res) => {
   try {
     const tratamientos = await Tratamiento.findAll({
       include: [
-        { model: Empleado, as: "empleado", attributes: ["nombre"] },
-        {
-          model: Enfermedad,
-          as: "enfermedad",
-          attributes: ["nombre", "causa"],
-          include: [
-            {
-              model: Historial,
-              as: "historiales",
-              attributes: ["id_historial"],
-              through: { attributes: [] },
-              include: [
-                { model: Bovino, as: "bovino", attributes: ["id_bovino", "nombre", "numero_crotal"] }
-              ]
-            }
-          ]
-        }
+        { model: Empleado,   as: "empleado",   attributes: ["nombre"] },
+        { model: Enfermedad, as: "enfermedad", attributes: ["nombre"] },
+        { model: Bovino,     as: "bovino",     attributes: ["nombre", "numero_crotal"] }
       ],
       order: [["fecha_inicio", "DESC"]]
     });
 
     const resultado = tratamientos.map(t => ({
       id_tratamiento:   t.id_tratamiento,
+      id_bovino:        t.id_bovino,
+      id_enfermedad:    t.id_enfermedad,
+      id_empleado:      t.id_empleado,
       nombre:           t.nombre,
       tipo_tratamiento: t.tipo_tratamiento,
       fecha_inicio:     t.fecha_inicio,
       fecha_fin:        t.fecha_fin,
       empleado:         t.empleado?.nombre || null,
       enfermedad:       t.enfermedad?.nombre || null,
-      causa:            t.enfermedad?.causa  || null,
-      bovinos: t.enfermedad?.historiales?.map(h => ({
-        id_bovino:    h.bovino?.id_bovino,
-        nombre:       h.bovino?.nombre,
-        numero_arete: h.bovino?.numero_arete
-      })).filter(b => b.id_bovino) || []
+      animal:           t.bovino?.nombre || null,
+      crotal:           t.bovino?.numero_crotal || null
     }));
 
     res.json(resultado);
@@ -58,23 +40,9 @@ exports.obtener = async (req, res) => {
     const { id } = req.params;
     const t = await Tratamiento.findByPk(id, {
       include: [
-        { model: Empleado, as: "empleado", attributes: ["nombre"] },
-        {
-          model: Enfermedad,
-          as: "enfermedad",
-          attributes: ["nombre", "causa"],
-          include: [
-            {
-              model: Historial,
-              as: "historiales",
-              attributes: ["id_historial"],
-              through: { attributes: [] },
-              include: [
-                { model: Bovino, as: "bovino", attributes: ["id_bovino", "nombre", "numero_crotal"] }
-              ]
-            }
-          ]
-        }
+        { model: Empleado,   as: "empleado",   attributes: ["nombre"] },
+        { model: Enfermedad, as: "enfermedad", attributes: ["nombre"] },
+        { model: Bovino,     as: "bovino",     attributes: ["nombre", "numero_crotal"] }
       ]
     });
 
@@ -82,18 +50,17 @@ exports.obtener = async (req, res) => {
 
     res.json({
       id_tratamiento:   t.id_tratamiento,
+      id_bovino:        t.id_bovino,
+      id_enfermedad:    t.id_enfermedad,
+      id_empleado:      t.id_empleado,
       nombre:           t.nombre,
       tipo_tratamiento: t.tipo_tratamiento,
       fecha_inicio:     t.fecha_inicio,
       fecha_fin:        t.fecha_fin,
       empleado:         t.empleado?.nombre || null,
       enfermedad:       t.enfermedad?.nombre || null,
-      causa:            t.enfermedad?.causa  || null,
-      bovinos: t.enfermedad?.historiales?.map(h => ({
-        id_bovino:    h.bovino?.id_bovino,
-        nombre:       h.bovino?.nombre,
-        numero_arete: h.bovino?.numero_arete
-      })).filter(b => b.id_bovino) || []
+      animal:           t.bovino?.nombre || null,
+      crotal:           t.bovino?.numero_crotal || null
     });
   } catch (error) {
     console.error("ERROR OBTENER TRATAMIENTO:", error);
@@ -101,34 +68,17 @@ exports.obtener = async (req, res) => {
   }
 };
 
-/* ══ LISTAR POR ENFERMEDAD ══ */
-exports.listarPorEnfermedad = async (req, res) => {
-  try {
-    const { id_enfermedad } = req.params;
-    const tratamientos = await Tratamiento.findAll({
-      where: { id_enfermedad },
-      include: [
-        { model: Empleado, as: "empleado", attributes: ["nombre"] }
-      ],
-      order: [["fecha_inicio", "DESC"]]
-    });
-    res.json(tratamientos);
-  } catch (error) {
-    console.error("ERROR LISTAR TRATAMIENTO POR ENFERMEDAD:", error);
-    res.status(500).json({ error: error.message });
-  }
-};
-
 /* ══ CREAR ══ */
 exports.crear = async (req, res) => {
   try {
-    const { id_enfermedad, id_empleado, nombre, tipo_tratamiento, fecha_inicio, fecha_fin } = req.body;
+    const { id_bovino, id_enfermedad, id_empleado, nombre, tipo_tratamiento, fecha_inicio, fecha_fin } = req.body;
 
     if (!id_enfermedad)  return res.status(400).json({ error: "La enfermedad es obligatoria" });
     if (!id_empleado)    return res.status(400).json({ error: "El empleado es obligatorio" });
     if (!nombre?.trim()) return res.status(400).json({ error: "El nombre es obligatorio" });
 
     const tratamiento = await Tratamiento.create({
+      id_bovino,
       id_enfermedad,
       id_empleado,
       nombre:           nombre.trim(),
@@ -148,12 +98,13 @@ exports.crear = async (req, res) => {
 exports.actualizar = async (req, res) => {
   try {
     const { id } = req.params;
-    const { id_enfermedad, id_empleado, nombre, tipo_tratamiento, fecha_inicio, fecha_fin } = req.body;
+    const { id_bovino, id_enfermedad, id_empleado, nombre, tipo_tratamiento, fecha_inicio, fecha_fin } = req.body;
 
     const tratamiento = await Tratamiento.findByPk(id);
     if (!tratamiento) return res.status(404).json({ error: "Tratamiento no encontrado" });
 
     await tratamiento.update({
+      id_bovino:        id_bovino                ?? tratamiento.id_bovino,
       id_enfermedad:    id_enfermedad            ?? tratamiento.id_enfermedad,
       id_empleado:      id_empleado              ?? tratamiento.id_empleado,
       nombre:           nombre?.trim()           ?? tratamiento.nombre,

@@ -10,6 +10,10 @@ const Historial = sequelize.define("HISTORIAL", {
   id_bovino: {
     type: DataTypes.INTEGER,
     allowNull: false
+  },
+  fecha: {
+    type: DataTypes.DATEONLY,
+    allowNull: true
   }
 }, {
   tableName: "HISTORIAL",
