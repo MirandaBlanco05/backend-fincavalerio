@@ -1,4 +1,6 @@
 const { Embarazo, Veterinario, Inseminacion } = require("../MODEL");
+const Ciclo = require("../../REPRODUCCION/MODEL/celo.model");
+const Bovino = require("../../BOVINO/MODEL/bovino.model");
  
 /* ── CREAR ── */
 exports.crear = async (req, res) => {
@@ -43,7 +45,14 @@ exports.listar = async (req, res) => {
         {
           model: Inseminacion,
           as: "INSEMINACION",
-          attributes: ["id_inseminacion", "fecha"]
+          attributes: ["id_inseminacion", "fecha"],
+          include: [
+            {
+              model: Ciclo,
+              as: "ciclo",
+              include: [{ model: Bovino, as: "bovino" }]
+            }
+          ]
         }
       ]
     });
@@ -63,7 +72,17 @@ exports.obtenerPorId = async (req, res) => {
     const embarazo = await Embarazo.findByPk(id, {
       include: [
         { model: Veterinario, as: "VETERINARIO" },
-        { model: Inseminacion, as: "INSEMINACION" }
+        { 
+          model: Inseminacion, 
+          as: "INSEMINACION",
+          include: [
+            {
+              model: Ciclo,
+              as: "ciclo",
+              include: [{ model: Bovino, as: "bovino" }]
+            }
+          ]
+        }
       ]
     });
  
