@@ -1,12 +1,15 @@
 // MODULOS/PARTO/CONTROLLER/parto.controller.js
-const { Parto, Embarazo } = require("../MODEL");
+const { Parto, Embarazo, Bovino } = require("../MODEL");
  
 /* ── CREAR ─────────────────────────────────────────────── */
 exports.crear = async (req, res) => {
   try {
     console.log("BODY RECIBIDO:", req.body);
  
-    const { id_embarazo, fecha_parto, numero_crias, observaciones } = req.body;
+    const { 
+      id_embarazo, fecha_parto, numero_crias, observaciones,
+      tipo_parto, sexo_cria, peso_cria, estado_cria 
+    } = req.body;
  
     if (!id_embarazo || !fecha_parto) {
       return res.status(400).json({
@@ -26,6 +29,10 @@ exports.crear = async (req, res) => {
       id_embarazo: toInt(id_embarazo),
       fecha_parto,
       numero_crias: toInt(numero_crias),
+      tipo_parto,
+      sexo_cria,
+      peso_cria: peso_cria || null,
+      estado_cria,
       observaciones: observaciones || null
     });
  
@@ -40,10 +47,32 @@ exports.crear = async (req, res) => {
 exports.listar = async (req, res) => {
   try {
     const partos = await Parto.findAll({
+      include: [
+        {
+          model: Embarazo,
+          as: "EMBARAZO",
+          include: [
+            { model: Bovino, as: "bovino", attributes: ["nombre", "numero_crotal"] }
+          ]
+        }
+      ],
       order: [["fecha_parto", "DESC"]]
     });
 
-    res.json(partos);
+    const resultado = partos.map(p => ({
+      id_parto:     p.id_parto,
+      id_embarazo:  p.id_embarazo,
+      fecha_parto:  p.fecha_parto,
+      numero_crias: p.numero_crias,
+      tipo_parto:   p.tipo_parto,
+      sexo_cria:    p.sexo_cria,
+      peso_cria:    p.peso_cria,
+      estado_cria:  p.estado_cria,
+      observaciones: p.observaciones,
+      bovino:       p.EMBARAZO?.bovino || null
+    }));
+
+    res.json(resultado);
   } catch (error) {
     console.error("ERROR LISTAR PARTOS:", error);
     res.status(500).json({ error: error.message });

@@ -20,6 +20,22 @@ const Parto = sequelize.define("PARTO", {
     type: DataTypes.INTEGER,
     allowNull: true
   },
+  tipo_parto: {
+    type: DataTypes.STRING(50),
+    allowNull: true
+  },
+  sexo_cria: {
+    type: DataTypes.STRING(20),
+    allowNull: true
+  },
+  peso_cria: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: true
+  },
+  estado_cria: {
+    type: DataTypes.STRING(50),
+    allowNull: true
+  },
   observaciones: {
     type: DataTypes.STRING(200),
     allowNull: true
