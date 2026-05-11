@@ -9,8 +9,7 @@ Venta.belongsTo(Cliente,      { foreignKey: "id_cliente", as: "cliente" });
 SecuenciaNcf.hasMany(Venta,   { foreignKey: "ncf", as: "ventas" });
 Venta.belongsTo(SecuenciaNcf, { foreignKey: "ncf", as: "secuencia" });
 
-ComprobanteFiscal.hasMany(SecuenciaNcf,      { foreignKey: "id_comprobante", as: "secuencias" });
-SecuenciaNcf.belongsTo(ComprobanteFiscal,    { foreignKey: "id_comprobante", as: "comprobante" });
+// ComprobanteFiscal.hasMany(SecuenciaNcf, as: "secuencias") ya está definido en COMPROBANTE/MODEL/index.js
 
 console.log("RELACIONES DE VENTA CARGADAS");
 
