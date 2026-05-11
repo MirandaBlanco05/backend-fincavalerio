@@ -1,4 +1,4 @@
-const { Venta, Cliente, SecuenciaNcf, ComprobanteFiscal } = require("../MODEL");
+const { Venta, Cliente, SecuenciaNcf, ComprobanteFiscal, MetodoPago } = require("../MODEL");
 const { DetalleVenta } = require("../../DETALLEVENTA/MODEL");
 const { sequelize } = require("../../../CORE/DATABASE/sequelize");
 
@@ -17,6 +17,7 @@ exports.listar = async (req, res) => {
     const ventas = await Venta.findAll({
       include: [
         { model: Cliente, as: "cliente", attributes: ["nombre", "rnc", "telefono"] },
+        { model: MetodoPago, as: "metodo" },
         {
           model: SecuenciaNcf, as: "secuencia", attributes: ["id_secuencia", "secuencia", "estado"],
           include: [{ model: ComprobanteFiscal, as: "comprobante", attributes: ["nombre", "tipo", "serie"] }]
@@ -32,7 +33,7 @@ exports.listar = async (req, res) => {
     const resultado = ventas.map(v => ({
       ...v.toJSON(),
       ncf_completo: construirNcf(v.secuencia),
-      productos_venta: v.detalles // Mapeo para el frontend
+      productos_venta: v.detalles
     }));
 
     res.json(resultado);
@@ -49,6 +50,7 @@ exports.obtener = async (req, res) => {
     const venta = await Venta.findByPk(id, {
       include: [
         { model: Cliente, as: "cliente" },
+        { model: MetodoPago, as: "metodo" },
         {
           model: SecuenciaNcf, as: "secuencia",
           include: [{ model: ComprobanteFiscal, as: "comprobante" }]
@@ -76,7 +78,7 @@ exports.obtener = async (req, res) => {
 exports.crear = async (req, res) => {
   const t = await sequelize.transaction();
   try {
-    const { id_cliente, fecha, concepto, ncf, estado, productos, metodo_pago } = req.body;
+    const { id_cliente, fecha, concepto, ncf, estado, productos, id_metodo } = req.body;
 
     if (!id_cliente) throw new Error("El cliente es obligatorio");
     if (!fecha)      throw new Error("La fecha es obligatoria");
@@ -86,7 +88,7 @@ exports.crear = async (req, res) => {
       fecha,
       concepto: concepto?.trim() || null,
       ncf:      ncf ? parseInt(ncf) : null,
-      metodo_pago: metodo_pago || "Efectivo",
+      id_metodo: id_metodo || 1,
       estado:   estado || "activo"
     }, { transaction: t });
 
@@ -95,7 +97,7 @@ exports.crear = async (req, res) => {
       const detalles = productos.map(p => ({
         id_venta: venta.id_venta,
         id_producto: p.id_producto || p.id_item,
-        id_metodo: 1, // Default
+        id_metodo: id_metodo || 1,
         cantidad: p.cantidad,
         precio_unitario: p.precio || p.precio_unitario,
         total: (p.cantidad * (p.precio || p.precio_unitario)),
@@ -104,7 +106,6 @@ exports.crear = async (req, res) => {
       await DetalleVenta.bulkCreate(detalles, { transaction: t });
     }
 
-    // Marcar secuencia como Usado
     if (ncf) {
       await SecuenciaNcf.update(
         { estado: "Usado" },
@@ -126,12 +127,11 @@ exports.actualizar = async (req, res) => {
   const t = await sequelize.transaction();
   try {
     const { id } = req.params;
-    const { id_cliente, fecha, concepto, ncf, estado, productos, metodo_pago } = req.body;
+    const { id_cliente, fecha, concepto, ncf, estado, productos, id_metodo } = req.body;
 
     const venta = await Venta.findByPk(id);
     if (!venta) throw new Error("Venta no encontrada");
 
-    // NCF logic
     if (ncf && parseInt(ncf) !== venta.ncf) {
       if (venta.ncf) {
         await SecuenciaNcf.update({ estado: "Disponible" }, { where: { id_secuencia: venta.ncf }, transaction: t });
@@ -144,17 +144,16 @@ exports.actualizar = async (req, res) => {
       fecha:      fecha            ?? venta.fecha,
       concepto:   concepto?.trim() ?? venta.concepto,
       ncf:        ncf ? parseInt(ncf) : venta.ncf,
-      metodo_pago: metodo_pago     ?? venta.metodo_pago,
+      id_metodo:  id_metodo        ?? venta.id_metodo,
       estado:     estado           ?? venta.estado
     }, { transaction: t });
 
-    // Actualizar detalles
     if (productos) {
       await DetalleVenta.destroy({ where: { id_venta: id }, transaction: t });
       const detalles = productos.map(p => ({
         id_venta: id,
         id_producto: p.id_producto || p.id_item,
-        id_metodo: 1,
+        id_metodo: id_metodo || 1,
         cantidad: p.cantidad,
         precio_unitario: p.precio || p.precio_unitario,
         total: (p.cantidad * (p.precio || p.precio_unitario)),
