@@ -20,6 +20,7 @@ require("./MODULOS/BOVINO/MODEL");
 require("./MODULOS/REPRODUCCION/MODEL/index.js");
 require("./MODULOS/INSEMINACION/MODEL/index.js");
 require("./MODULOS/EMBARAZO/MODEL");
+require("./MODULOS/PARTO/MODEL");
 require("./MODULOS/EMPLEADO/MODEL");
 require("./MODULOS/PRODUCTO/MODEL");
 require("./MODULOS/LOGIN/MODEL/login.model");
