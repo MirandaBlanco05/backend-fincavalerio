@@ -7,7 +7,7 @@ exports.listar = async (req, res) => {
     const { Vacuna, DetalleVacuna, Insumo, Bovino, Empleado } = require("../MODEL");
     const vacunas = await Vacuna.findAll({
       include: [
-        { model: Insumo, as: 'insumo', attributes: ['nombre_insumo'] },
+        { model: Insumo, as: 'insumo', attributes: ['nombre'] },
         {
           model: DetalleVacuna,
           as: 'detalles',
@@ -26,7 +26,7 @@ exports.listar = async (req, res) => {
         id_vacuna: v.id_vacuna,
         tipo_vacuna: v.tipo_vacuna,
         fecha: v.fecha,
-        insumo_nombre: v.insumo?.nombre_insumo || '—',
+        insumo_nombre: v.insumo?.nombre || '—',
         bovino_nombre: detalle?.bovino?.nombre || '—',
         empleado_nombre: detalle?.empleado?.nombre || '—',
         id_bovino: detalle?.id_bovino,
