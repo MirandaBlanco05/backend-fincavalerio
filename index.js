@@ -96,6 +96,7 @@ app.use("/api/detalleCompra", require("./MODULOS/DETALLECOMPRA/routes"));
 app.use("/api/enfermedad", require("./MODULOS/ENFERMEDAD/routes"));
 app.use("/api/historial", require("./MODULOS/HISTORIAL/routes"));
 app.use("/api/tratamiento", require("./MODULOS/TRATAMIENTO/routes"));
+app.use("/api/vacuna", require("./MODULOS/VACUNA/routes"));
 app.use("/api/dosis", require("./MODULOS/DOSIS/routes"));
 
 // ---- Routers de los 6 dashboards ----
