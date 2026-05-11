@@ -22,4 +22,4 @@ Enfermedad.belongsToMany(Historial, {
 
 console.log("RELACIONES DE HISTORIAL CARGADAS");
 
-module.exports = { Historial, HistorialEnfermedad, Enfermedad, Bovino };
+module.exports = { Historial, Enfermedad, Bovino, HistorialEnfermedad };
