@@ -39,7 +39,6 @@ exports.crearCiclo = async (req, res) => {
 exports.obtenerCiclos = async (req, res) => {
   try {
     const lista = await Ciclo.findAll({
-      attributes: { exclude: ["id_bovino"] },
       include: [
         {
           model: Bovino,
