@@ -61,7 +61,15 @@ exports.listar = async (req, res) => {
       order: [["fecha", "DESC"]]
     });
 
-    res.json(ordenos);
+    const rawOrdenios = ordenos.map(o => {
+      const plain = o.get({ plain: true });
+      // Aplanamos los nombres para asegurar visibilidad en el frontend
+      plain.bovino_nombre = plain.bovino?.nombre || (plain.bovino?.numero_crotal ? `Crotal ${plain.bovino.numero_crotal}` : `Vaca #${plain.id_bovino}`);
+      plain.empleado_nombre = plain.encargado?.nombre || `ID: ${plain.id_empleado}`;
+      return plain;
+    });
+
+    res.json(rawOrdenios);
   } catch (error) {
     console.error("ERROR LISTAR ORDENOS:", error);
     res.status(500).json({ error: error.message });
