@@ -52,9 +52,9 @@ exports.obtenerPorId = async (req, res) => {
 
     const visita = await Visita.findByPk(id, {
       include: [
-        { model: Veterinario },
-        { model: Bovino },
-        { model: Motivo, through: { attributes: [] } }
+        { model: Veterinario, as: "VETERINARIO" },
+        { model: Bovino, as: "BOVINO" },
+        { model: Motivo, as: "Motivos", through: { attributes: [] } }
       ]
     });
 
