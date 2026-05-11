@@ -3,8 +3,6 @@ name: Deploy Backend - Finca Valerio
 on:
   push:
     branches: [ main ]
-    paths:
-      - 'backend/**'
 
 jobs:
   deploy:
@@ -22,11 +20,9 @@ jobs:
 
       - name: Instalar dependencias
         run: npm install
-        working-directory: ./backend
 
       - name: Verificar sintaxis
         run: node --check index.js
-        working-directory: ./backend
 
       - name: Desplegar en Render
         run: |
