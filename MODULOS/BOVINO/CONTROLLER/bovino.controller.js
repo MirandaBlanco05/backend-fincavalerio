@@ -95,22 +95,6 @@ exports.actualizar = async (req, res) => {
     const { id_grupo, numero_crotal, id_raza, nombre, fecha_nacimiento, nombre_madre, sexo, edad, estado, peso } = req.body;
 
     const bovino = await Bovino.findByPk(id);
-    if (!bovino) return res.status(404).json({ error: "Bovino no encontrado" });
-
-    const toInt = (val) => {
-      if (val === "" || val === null || val === undefined) return null;
-      const parsed = parseInt(String(val).replace(/\D/g, ''));
-      return isNaN(parsed) ? null : parsed;
-    };
-
-    await bovino.update({
-      id_grupo: id_grupo !== undefined ? toInt(id_grupo) : bovino.id_grupo,
-      numero_crotal: numero_crotal !== undefined ? toInt(numero_crotal) : bovino.numero_crotal,
-      id_raza: id_raza !== undefined ? toInt(id_raza) : bovino.id_raza,
-      nombre: nombre !== undefined ? (nombre ? nombre.trim().substring(0, 30) : 'Sin nombre') : bovino.nombre,
-      fecha_nacimiento: fecha_nacimiento === "" ? null : (fecha_nacimiento || bovino.fecha_nacimiento),
-      nombre_madre: nombre_madre !== undefined ? (nombre_madre ? nombre_madre.trim().substring(0, 30) : null) : bovino.nombre_madre,
-      sexo: sexo !== undefined ? sexo.trim().substring(0, 6) : bovino.sexo,
       edad: edad !== undefined ? toInt(edad) : bovino.edad,
       estado: estado !== undefined ? estado.trim().substring(0, 30) : bovino.estado,
       peso: peso !== undefined ? (peso ? String(peso).substring(0, 10) : null) : bovino.peso
