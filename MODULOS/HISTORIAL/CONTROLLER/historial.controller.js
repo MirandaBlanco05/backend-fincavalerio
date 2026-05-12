@@ -6,7 +6,7 @@ exports.listar = async (req, res) => {
     const historiales = await Historial.findAll({
       include: [
         { model: Bovino,      as: "bovino",       attributes: ["nombre", "numero_crotal"] },
-        { model: Enfermedad,  as: "enfermedades", attributes: ["nombre"],
+        { model: Enfermedad,  as: "enfermedades", attributes: ["id_enfermedad", "nombre"],
           through: { attributes: [] } }
       ],
       order: [["id_historial", "DESC"]]
@@ -26,7 +26,7 @@ exports.listarPorBovino = async (req, res) => {
       where: { id_bovino },
       include: [
         { model: Bovino,      as: "bovino",       attributes: ["nombre", "numero_crotal"] },
-        { model: Enfermedad,  as: "enfermedades", attributes: ["nombre"],
+        { model: Enfermedad,  as: "enfermedades", attributes: ["id_enfermedad", "nombre"],
           through: { attributes: [] } }
       ],
       order: [["id_historial", "DESC"]]
@@ -44,7 +44,7 @@ exports.obtener = async (req, res) => {
     const historial = await Historial.findByPk(id, {
       include: [
         { model: Bovino,     as: "bovino",       attributes: ["nombre", "numero_crotal"] },
-        { model: Enfermedad, as: "enfermedades", attributes: ["nombre"],
+        { model: Enfermedad, as: "enfermedades", attributes: ["id_enfermedad", "nombre"],
           through: { attributes: [] } }
       ]
     });
